@@ -11,7 +11,6 @@ const preloadPath = fileURLToPath(new URL("./preload.cjs", import.meta.url));
 const appIconPath = fileURLToPath(new URL("./assets/app-icon.ico", import.meta.url));
 const SYSTEM_WINDOW_WIDTH = 1566;
 const SYSTEM_WINDOW_HEIGHT = 854;
-const SYSTEM_WINDOW_MAX_HEIGHT = 885;
 const SYSTEM_MIN_WIDTH = 1024;
 const SYSTEM_MIN_HEIGHT = 640;
 const LOGIN_WINDOW_WIDTH = 500;
@@ -114,8 +113,6 @@ async function createWindow() {
     height: LOGIN_WINDOW_HEIGHT,
     minWidth: LOGIN_WINDOW_WIDTH,
     minHeight: LOGIN_WINDOW_HEIGHT,
-    maxWidth: SYSTEM_WINDOW_WIDTH,
-    maxHeight: SYSTEM_WINDOW_MAX_HEIGHT,
     resizable: false,
     maximizable: false,
     useContentSize: true,
@@ -139,11 +136,15 @@ app.whenReady().then(() => {
     if (mode === "system") {
       mainWindow.setResizable(true);
       mainWindow.setMinimumSize(SYSTEM_MIN_WIDTH, SYSTEM_MIN_HEIGHT);
-      mainWindow.setMaximumSize(SYSTEM_WINDOW_WIDTH, SYSTEM_WINDOW_MAX_HEIGHT);
+      // No upper bound in system mode: allow maximize/fullscreen on large displays.
+      mainWindow.setMaximumSize(0, 0);
+      mainWindow.setMaximizable(true);
       mainWindow.setContentSize(SYSTEM_WINDOW_WIDTH, SYSTEM_WINDOW_HEIGHT, true);
     } else {
+      if (mainWindow.isMaximized()) mainWindow.unmaximize();
+      mainWindow.setMaximizable(false);
       mainWindow.setMinimumSize(LOGIN_WINDOW_WIDTH, LOGIN_WINDOW_HEIGHT);
-      mainWindow.setMaximumSize(SYSTEM_WINDOW_WIDTH, SYSTEM_WINDOW_MAX_HEIGHT);
+      mainWindow.setMaximumSize(0, 0);
       mainWindow.setContentSize(LOGIN_WINDOW_WIDTH, LOGIN_WINDOW_HEIGHT, true);
       mainWindow.setResizable(false);
     }

@@ -22,7 +22,7 @@ const companyPilotKinds = [
   "训练机", "特技机", "水陆两栖", "超轻型", "通航单发", "通航双发", "野外短距",
   "单发涡桨", "双发涡桨", "通用涡桨", "轻型喷气", "公务喷气", "干线喷气", "货运喷气",
   "支线客机", "宽体客机", "超大型客机", "超大货运", "军用运输", "重型运输", "高速喷气",
-  "直升机", "重型直升机", "旋翼机", "复古飞机", "复古训练"
+  "直升机", "重型直升机", "旋翼机", "复古飞机", "复古训练", "超音速客机", "特种观测"
 ];
 const COMPANY_TASK_OFFER_COUNT = 12;
 const COMPANY_STARTUP_FUNDS_MIN = 10_000;
@@ -220,7 +220,77 @@ const aircraftCatalog = [
   { id: "draco-x", name: "Atey Aviation Draco X", kind: "野外短距", price: 1500000, rent: 5200, range: 620, pace: "极限 STOL", unlockHours: 30, note: "高性能涡桨短距飞机，适合山地和极端野外起降。" },
   { id: "pc24", name: "Pilatus PC-24", kind: "公务喷气", price: 11500000, rent: 21000, range: 2000, pace: "多用途公务", unlockHours: 82, note: "可在短跑道运行的公务喷气机，适合高级包机和商务航段。" },
   { id: "ryan-nyp", name: "Ryan NYP Spirit of St. Louis", kind: "复古飞机", price: 650000, rent: 2800, range: 3590, pace: "历史远航", unlockHours: 25, note: "经典远航飞机，适合历史挑战和复古长途任务。" },
-  { id: "saab-340", name: "Saab 340", kind: "支线客机", price: 9000000, rent: 15000, range: 935, pace: "支线涡桨", unlockHours: 62, note: "成熟的双发支线客机，适合区域客运和短程航线。" }
+  { id: "saab-340", name: "Saab 340", kind: "支线客机", price: 9000000, rent: 15000, range: 935, pace: "支线涡桨", unlockHours: 62, note: "成熟的双发支线客机，适合区域客运和短程航线。" },
+  // MSFS 2020/2024 原生机型补充（此前未收录）。
+  { id: "c182t", name: "Cessna 182T Skylane", kind: "通航单发", price: 480000, rent: 2400, range: 930, pace: "通航", unlockHours: 10, note: "经典高翼单发，载重和航程优于 172，适合通航进阶。" },
+  { id: "c208-classic", name: "Cessna 208 Caravan", kind: "单发涡桨", price: 2300000, rent: 6800, range: 1070, pace: "支线/货运", unlockHours: 32, note: "初代 Caravan，坚固可靠的多用途涡桨平台。" },
+  { id: "beech-d18s", name: "Beechcraft D18S", kind: "复古飞机", price: 550000, rent: 2600, range: 900, pace: "复古双发", unlockHours: 20, note: "经典双发复古运输机，适合怀旧货运和历史航线。" },
+  { id: "dc3", name: "Douglas DC-3", kind: "复古飞机", price: 1200000, rent: 4200, range: 1370, pace: "复古运输", unlockHours: 30, note: "航空史上最著名的运输机，适合复古客货运任务。" },
+  { id: "ju52", name: "Junkers Ju 52", kind: "复古飞机", price: 980000, rent: 3800, range: 540, pace: "复古三发", unlockHours: 26, note: "波纹蒙皮三发运输机，适合历史航线和特殊活动。" },
+  { id: "h145", name: "Airbus H145", kind: "直升机", price: 9800000, rent: 18500, range: 351, pace: "医疗/警用", unlockHours: 70, note: "双发中型直升机，适合医疗救援、警务和海上作业。" },
+  { id: "h160", name: "Airbus H160", kind: "直升机", price: 14000000, rent: 24000, range: 475, pace: "新一代中型", unlockHours: 85, note: "新一代中型直升机，适合公务运输和近海任务。" },
+  { id: "r44", name: "Robinson R44 Raven II", kind: "直升机", price: 520000, rent: 2600, range: 300, pace: "轻型活塞", unlockHours: 12, note: "全球最畅销的轻型活塞直升机，适合训练和观光。" },
+  { id: "md530f", name: "MD Helicopters MD 530F", kind: "直升机", price: 2800000, rent: 7800, range: 232, pace: "轻型高原", unlockHours: 40, note: "灵活的轻型涡轴直升机，高原性能优异。" },
+  { id: "pipistrel-virus", name: "Pipistrel Virus SW 121", kind: "超轻型", price: 160000, rent: 900, range: 900, pace: "高效轻航", unlockHours: 5, note: "高效低耗轻型机，适合远距离 VFR 巡航。" },
+  { id: "vertigo", name: "DR Aviation Vertigo", kind: "特技机", price: 120000, rent: 800, range: 320, pace: "竞技特技", unlockHours: 8, note: "轻量竞技特技机，适合花式飞行和挑战赛。" },
+  { id: "husky-a1c", name: "Aviat Husky A-1C", kind: "野外短距", price: 260000, rent: 1500, range: 650, pace: "STOL", unlockHours: 8, note: "经典两座野外飞机，适合丛林与山地起降。" },
+  { id: "shock-ultra", name: "Zlin Shock Ultra", kind: "野外短距", price: 210000, rent: 1250, range: 470, pace: "极限 STOL", unlockHours: 9, note: "超短距起降性能，适合极限野外挑战。" },
+  { id: "optica", name: "Edgley Optica", kind: "特种观测", price: 380000, rent: 2100, range: 570, pace: "低速观测", unlockHours: 14, note: "全景座舱观测机，适合巡查、观光和航拍任务。" },
+  { id: "an2", name: "Antonov An-2", kind: "复古飞机", price: 420000, rent: 2200, range: 456, pace: "复古多用途", unlockHours: 15, note: "世界最大单发双翼机，适合野外货运和怀旧航线。" },
+  { id: "dhc2-beaver", name: "De Havilland DHC-2 Beaver", kind: "野外短距", price: 780000, rent: 3200, range: 395, pace: "水陆通用", unlockHours: 18, note: "传奇丛林飞机，可换浮筒执行水上任务。" },
+  { id: "dhc7", name: "De Havilland DHC-7", kind: "支线客机", price: 8200000, rent: 14000, range: 690, pace: "短距支线", unlockHours: 58, note: "四发短距支线客机，适合城市机场和高原航线。" },
+  { id: "dash8-q400", name: "De Havilland Dash 8 Q400", kind: "支线客机", price: 19500000, rent: 28000, range: 1100, pace: "高速涡桨", unlockHours: 88, note: "高速涡桨支线客机，兼具涡桨经济性与喷气速度。" },
+  { id: "b721", name: "Boeing 727-100", kind: "干线喷气", price: 12000000, rent: 19000, range: 2250, pace: "复古三发", unlockHours: 85, note: "经典三发窄体客机，适合复古航线任务。" },
+  { id: "b722", name: "Boeing 727-200", kind: "干线喷气", price: 14000000, rent: 21000, range: 2170, pace: "复古三发", unlockHours: 90, note: "加长型 727，适合复古客运和货运航线。" },
+  { id: "b732", name: "Boeing 737-200", kind: "干线喷气", price: 9000000, rent: 15000, range: 2300, pace: "复古干线", unlockHours: 70, note: "初代 737 喷气客机，适合复古短中程航线。" },
+  { id: "b744", name: "Boeing 747-400", kind: "超大型客机", price: 72000000, rent: 82000, range: 7260, pace: "洲际", unlockHours: 200, note: "\"空中女王\"经典型号，适合远程干线和货运改装航线。" },
+  { id: "concorde", name: "Aerospatiale-BAC Concorde", kind: "超音速客机", price: 150000000, rent: 160000, range: 3900, pace: "超音速", unlockHours: 350, note: "唯一投入运营的超音速客机，终局挑战机型。" },
+  { id: "vulcan", name: "Avro Vulcan", kind: "复古飞机", price: 45000000, rent: 50000, range: 2607, pace: "历史轰炸机", unlockHours: 150, note: "三角翼冷战名机，适合航展和历史飞行活动。" },
+  { id: "spitfire", name: "Supermarine Spitfire", kind: "复古飞机", price: 3800000, rent: 9500, range: 434, pace: "二战战机", unlockHours: 45, note: "二战传奇战斗机，适合历史纪念飞行。" },
+  { id: "p51d", name: "North American P-51D Mustang", kind: "复古飞机", price: 3500000, rent: 9000, range: 1000, pace: "二战战机", unlockHours: 45, note: "二战护航战斗机，适合竞速和历史飞行。" },
+  { id: "t45", name: "Boeing T-45 Goshawk", kind: "高速喷气", price: 18000000, rent: 26000, range: 700, pace: "喷气教练", unlockHours: 100, note: "舰载喷气教练机，适合高速训练科目。" },
+  { id: "f16", name: "General Dynamics F-16C", kind: "高速喷气", price: 55000000, rent: 60000, range: 2280, pace: "高速挑战", unlockHours: 160, note: "多用途战斗机，用于高速挑战活动，不参与普通客运。" },
+  { id: "sr71", name: "Lockheed SR-71 Blackbird", kind: "高速喷气", price: 120000000, rent: 130000, range: 2900, pace: "极速传奇", unlockHours: 300, note: "史上最快有人驾驶喷气机，终局收藏挑战。" },
+  // 主流第三方付费机型（PMDG / Fenix / iniBuilds / Aerosoft / Just Flight /
+  // Leonardo / Felis / Blackbird / HPG 等）。已有同型号原生条目的共用其记录。
+  { id: "b737-pmdg-700", name: "Boeing 737-700", kind: "干线喷气", price: 17000000, rent: 24000, range: 3010, pace: "干线", unlockHours: 92, note: "737NG 中短机身型号，PMDG 与原生皆可执飞。" },
+  { id: "b77f", name: "Boeing 777F", kind: "货运喷气", price: 80000000, rent: 90000, range: 9200, pace: "远程货运", unlockHours: 215, note: "远程宽体货机，适合洲际高价值货运。" },
+  { id: "b748f", name: "Boeing 747-8F", kind: "货运喷气", price: 92000000, rent: 96000, range: 4390, pace: "超大货运", unlockHours: 225, note: "巨型四发货机，适合旗舰货运航线。" },
+  { id: "a321neo", name: "Airbus A321neo", kind: "干线喷气", price: 26000000, rent: 36000, range: 4000, pace: "长程窄体", unlockHours: 108, note: "新一代高容量窄体，iniBuilds/原生皆可执飞。" },
+  { id: "a330-900", name: "Airbus A330-900neo", kind: "宽体客机", price: 78000000, rent: 88000, range: 7200, pace: "远程宽体", unlockHours: 195, note: "新一代 A330neo，高效远程宽体客机。" },
+  { id: "a306f", name: "Airbus A300-600F", kind: "货运喷气", price: 38000000, rent: 50000, range: 4000, pace: "宽体货运", unlockHours: 148, note: "iniBuilds 经典宽体货机，适合快件干线。" },
+  { id: "md80-leonardo", name: "Leonardo MD-82 Fly The Maddog X", kind: "干线喷气", price: 10500000, rent: 16500, range: 2050, pace: "精研复古", unlockHours: 68, note: "深度系统仿真 MD-82，硬核复古干线。" },
+  { id: "b742", name: "Boeing 747-200", kind: "超大型客机", price: 48000000, rent: 58000, range: 6560, pace: "复古洲际", unlockHours: 175, note: "Felis 经典机械时代巨无霸，适合复古远程航线。" },
+  { id: "atr72f", name: "ATR 72-600F", kind: "货运喷气", price: 18500000, rent: 27000, range: 825, pace: "支线货运", unlockHours: 88, note: "ATR 涡桨货机，适合区域快件运输。" },
+  { id: "c310r", name: "Cessna 310R", kind: "通航双发", price: 620000, rent: 2900, range: 1000, pace: "经典双发", unlockHours: 18, note: "Milviz/Blackbird 经典活塞双发，适合双发进阶。" },
+  { id: "c414aw", name: "Cessna 414AW Chancellor", kind: "通航双发", price: 950000, rent: 3800, range: 1230, pace: "增压双发", unlockHours: 24, note: "Flysimware 增压双发，适合中程商务包机。" },
+  { id: "pa28-arrow", name: "Piper PA-28R Arrow III", kind: "通航单发", price: 320000, rent: 1700, range: 880, pace: "复杂单发", unlockHours: 8, note: "Just Flight 收放起落架训练机，适合执照进阶。" },
+  { id: "pa38-tomahawk", name: "Piper PA-38 Tomahawk", kind: "训练机", price: 130000, rent: 750, range: 468, pace: "初训", unlockHours: 2, note: "Just Flight 经典初级教练机。" },
+  { id: "pa44-seminole", name: "Piper PA-44 Seminole", kind: "通航双发", price: 580000, rent: 2700, range: 700, pace: "双发训练", unlockHours: 20, note: "主流双发执照训练机型。" },
+  { id: "warrior2", name: "Piper PA-28 Warrior II", kind: "训练机", price: 180000, rent: 950, range: 640, pace: "训练", unlockHours: 3, note: "Just Flight 经典下单翼教练机。" },
+  { id: "bn2-islander", name: "BN-2 Islander", kind: "通航双发", price: 890000, rent: 3600, range: 750, pace: "岛际短距", unlockHours: 22, note: "经典岛际短距双发，适合离岛客货运。" },
+  { id: "twin-comanche", name: "Piper PA-30 Twin Comanche", kind: "通航双发", price: 420000, rent: 2200, range: 1030, pace: "轻型双发", unlockHours: 18, note: "A2A 精研轻型双发，操纵品质出色。" },
+  { id: "comanche-250", name: "Piper PA-24 Comanche 250", kind: "通航单发", price: 350000, rent: 1800, range: 1060, pace: "高性能单发", unlockHours: 12, note: "A2A Accu-Sim 深度仿真活塞单发。" },
+  { id: "kodiak-100", name: "Daher Kodiak 100", kind: "单发涡桨", price: 2200000, rent: 6500, range: 1132, pace: "野外涡桨", unlockHours: 30, note: "SWS 多用途涡桨，兼顾野外短距和货运。" },
+  { id: "pc12-carenado", name: "Pilatus PC-12 Legacy", kind: "通用涡桨", price: 1150000, rent: 4200, range: 1560, pace: "多用途", unlockHours: 22, note: "Carenado 初代 PC-12，经济多用途涡桨。" },
+  { id: "tbm850", name: "Daher TBM 850", kind: "单发涡桨", price: 380000, rent: 3000, range: 1585, pace: "快速通勤", unlockHours: 11, note: "上一代高速单发涡桨，快速通勤主力。" },
+  { id: "phenom-300", name: "Embraer Phenom 300E", kind: "轻型喷气", price: 5800000, rent: 12000, range: 2010, pace: "轻型公务", unlockHours: 55, note: "全球最畅销轻型公务机之一。" },
+  { id: "vision-g2", name: "Cirrus Vision Jet G2", kind: "轻型喷气", price: 2600000, rent: 8200, range: 1275, pace: "个人喷气", unlockHours: 44, note: "FlightFX 精研个人喷气机。" },
+  { id: "citation-560xl", name: "Cessna Citation Excel 560XL", kind: "公务喷气", price: 6500000, rent: 12800, range: 1858, pace: "公务机", unlockHours: 58, note: "544 经典中型公务机，包机市场主力。" },
+  { id: "challenger-650", name: "Bombardier Challenger 650", kind: "公务喷气", price: 13500000, rent: 22500, range: 4000, pace: "远程公务", unlockHours: 88, note: "宽舱远程公务机，适合跨洲商务包机。" },
+  { id: "praetor-600", name: "Embraer Praetor 600", kind: "公务喷气", price: 12000000, rent: 21000, range: 4018, pace: "远程公务", unlockHours: 85, note: "新一代超中型公务机，航程可跨大西洋。" },
+  { id: "hjet", name: "Honda HA-420 HondaJet", kind: "轻型喷气", price: 3900000, rent: 9800, range: 1223, pace: "轻型公务", unlockHours: 48, note: "翼上发动机布局的创新轻型公务机。" },
+  { id: "airbus-h135", name: "Airbus H135", kind: "直升机", price: 5800000, rent: 13500, range: 342, pace: "医疗/公务", unlockHours: 58, note: "HPG 深度仿真双发轻型直升机。" },
+  { id: "airbus-h147", name: "Airbus H145 (HPG)", kind: "直升机", price: 10200000, rent: 19000, range: 351, pace: "精研中型", unlockHours: 72, note: "HPG H145 深度仿真版，支持吊挂与绞车作业。" },
+  { id: "bell-206", name: "Bell 206B JetRanger", kind: "直升机", price: 1400000, rent: 5200, range: 374, pace: "经典轻型", unlockHours: 28, note: "史上最经典的轻型涡轴直升机之一。" },
+  { id: "schweizer-s300", name: "Schweizer S300C", kind: "直升机", price: 380000, rent: 2000, range: 195, pace: "活塞训练", unlockHours: 8, note: "经典活塞训练直升机，适合旋翼初训。" },
+  { id: "fokker-f28-jf", name: "Fokker F28 Professional", kind: "支线客机", price: 8800000, rent: 14500, range: 1710, pace: "精研复古", unlockHours: 68, note: "Just Flight 深度仿真版 F28。" },
+  { id: "bae146-jf", name: "BAe 146 Professional", kind: "支线客机", price: 12500000, rent: 17500, range: 1600, pace: "精研支线", unlockHours: 72, note: "Just Flight 四发支线深度仿真版。" },
+  { id: "l1011", name: "Lockheed L-1011 TriStar", kind: "宽体客机", price: 42000000, rent: 55000, range: 4250, pace: "复古三发", unlockHours: 165, note: "经典三发宽体客机，适合复古远程航线。" },
+  { id: "dc6", name: "Douglas DC-6B", kind: "复古飞机", price: 2800000, rent: 7500, range: 3005, pace: "复古四发", unlockHours: 40, note: "PMDG 活塞时代四发客机，适合怀旧长途。" },
+  { id: "dc-designs-c130", name: "Lockheed C-130 Hercules", kind: "重型运输", price: 32000000, rent: 42000, range: 2050, pace: "战术运输", unlockHours: 130, note: "传奇战术运输机，适合野战跑道和重型空运。" },
+  { id: "twin-otter-aerosoft", name: "DHC-6 Twin Otter (Aerosoft)", kind: "双发涡桨", price: 7000000, rent: 12800, range: 775, pace: "短距支线", unlockHours: 54, note: "Aerosoft 深度仿真版双水獭，支持浮筒和雪橇。" }
+
 ];
 
 // Type ratings are kept per catalog model so similarly named variants still
@@ -339,7 +409,75 @@ const aircraftIdentityRules = {
   "draco-x": ["ATEYAVIATIONDRACOX", "GOTFRIENDSDRACOX", "DRACOX"],
   pc24: ["PILATUSPC24", "PC24", "PC24JET"],
   "ryan-nyp": ["RYANNYPSPIRITOFSTLOUIS", "RYANNYP", "SPIRITOFSTLOUIS", "NYP"],
-  "saab-340": ["SAAB340", "SAAB340B", "SF34"]
+  "saab-340": ["SAAB340", "SAAB340B", "SF34"],
+  // MSFS 2020/2024 原生机型补充。
+  c182t: ["CESSNA182T", "C182T", "SKYLANE", "C182"],
+  "c208-classic": ["CESSNA208CARAVAN", "C208CARAVAN", "CESSNA208", "C208"],
+  "beech-d18s": ["BEECHCRAFTD18S", "BEECHD18S", "D18S", "BE18"],
+  dc3: ["DOUGLASDC3", "DC3", "C47"],
+  ju52: ["JUNKERSJU52", "JU52"],
+  h145: ["AIRBUSH145", "H145", "EC145", "BK117D2"],
+  h160: ["AIRBUSH160", "H160"],
+  r44: ["ROBINSONR44", "R44RAVEN", "R44"],
+  md530f: ["MD530F", "MDHELICOPTERS530F", "MD530", "HU53"],
+  "pipistrel-virus": ["PIPISTRELVIRUS", "VIRUSSW121", "VIRUSSW"],
+  vertigo: ["DRAVIATIONVERTIGO", "VERTIGO"],
+  "husky-a1c": ["AVIATHUSKYA1C", "HUSKYA1C", "HUSKY", "A1C"],
+  "shock-ultra": ["ZLINSHOCKULTRA", "SHOCKULTRA"],
+  optica: ["EDGLEYOPTICA", "OPTICA"],
+  an2: ["ANTONOVAN2", "AN2"],
+  "dhc2-beaver": ["DHC2BEAVER", "DHC2", "BEAVER"],
+  dhc7: ["DEHAVILLANDDHC7", "DHC7", "DASH7"],
+  "dash8-q400": ["DASH8Q400", "DHC8Q400", "BOMBARDIERQ400", "Q400", "DH8D"],
+  b721: ["BOEING727100", "B727100", "727100", "B721"],
+  b722: ["BOEING727200", "B727200", "727200", "B722"],
+  b732: ["BOEING737200", "B737200", "737200", "B732"],
+  b744: ["BOEING747400", "B747400", "747400", "B744"],
+  concorde: ["CONCORDE", "AEROSPATIALEBACCONCORDE", "CONC"],
+  vulcan: ["AVROVULCAN", "VULCAN"],
+  spitfire: ["SUPERMARINESPITFIRE", "SPITFIRE", "SPIT"],
+  p51d: ["P51DMUSTANG", "P51D", "P51", "MUSTANG"],
+  t45: ["T45GOSHAWK", "T45"],
+  f16: ["F16C", "F16", "FIGHTINGFALCON"],
+  sr71: ["SR71BLACKBIRD", "SR71"],
+  // 第三方付费机型。
+  "b737-pmdg-700": ["PMDG737700", "BOEING737700", "B737700", "737700", "B737W"],
+  b77f: ["BOEING777F", "B777F", "777F", "PMDG777F", "B77F", "B77LF"],
+  b748f: ["BOEING7478F", "B7478F", "7478F", "B748F"],
+  a321neo: ["AIRBUSA321NEO", "A321NEO", "INIBUILDSA321NEO", "A21N"],
+  "a330-900": ["AIRBUSA330900", "A330900NEO", "A330900", "A339", "HEADWINDA339"],
+  a306f: ["AIRBUSA300600F", "A300600F", "INIBUILDSA300", "A306F", "A306"],
+  "md80-leonardo": ["FLYTHEMADDOGX", "MADDOGX", "LEONARDOMD82", "MD82"],
+  b742: ["BOEING747200", "B747200", "747200", "B742", "FELIS747"],
+  atr72f: ["ATR72600F", "ATR72F"],
+  c310r: ["CESSNA310R", "C310R", "C310", "MILVIZ310R", "BLACKBIRD310R"],
+  c414aw: ["CESSNA414AW", "C414AW", "C414", "CHANCELLOR"],
+  "pa28-arrow": ["PA28RARROW", "PA28R", "ARROWIII", "ARROW", "P28R"],
+  "pa38-tomahawk": ["PA38TOMAHAWK", "PA38", "TOMAHAWK"],
+  "pa44-seminole": ["PA44SEMINOLE", "PA44", "SEMINOLE"],
+  warrior2: ["PA28WARRIOR", "WARRIORII", "WARRIOR", "P28A"],
+  "bn2-islander": ["BN2ISLANDER", "BN2", "ISLANDER", "BNI2"],
+  "twin-comanche": ["PA30TWINCOMANCHE", "TWINCOMANCHE", "PA30"],
+  "comanche-250": ["PA24COMANCHE", "COMANCHE250", "PA24"],
+  "kodiak-100": ["KODIAK100", "KODIAK", "DAHERKODIAK", "KODI"],
+  "pc12-carenado": ["PILATUSPC12LEGACY", "CARENADOPC12", "PC12LEGACY"],
+  tbm850: ["TBM850", "DAHERTBM850"],
+  "phenom-300": ["PHENOM300", "EMBRAERPHENOM300", "E55P"],
+  "vision-g2": ["VISIONJETG2", "SF50G2", "FLIGHTFXSF50"],
+  "citation-560xl": ["CITATIONEXCEL", "560XL", "C56X", "CITATIONXLS"],
+  "challenger-650": ["CHALLENGER650", "CL650", "CL60"],
+  "praetor-600": ["PRAETOR600", "PRAE600", "E545"],
+  hjet: ["HONDAJET", "HA420", "HJET", "HDJT"],
+  "airbus-h135": ["HPGH135", "AIRBUSH135", "H135", "EC135P3"],
+  "airbus-h147": ["HPGH145", "H145HPG", "BK117D3"],
+  "bell-206": ["BELL206B", "BELL206", "JETRANGER", "B06"],
+  "schweizer-s300": ["SCHWEIZERS300", "S300C", "S300", "H269"],
+  "fokker-f28-jf": ["JUSTFLIGHTF28", "F28PROFESSIONAL", "FOKKERF28", "F28"],
+  "bae146-jf": ["JUSTFLIGHTBAE146", "BAE146PROFESSIONAL", "BAE146", "B461", "B462", "B463"],
+  l1011: ["L1011TRISTAR", "L1011", "TRISTAR", "L101"],
+  dc6: ["DOUGLASDC6B", "PMDGDC6", "DC6B", "DC6"],
+  "dc-designs-c130": ["C130HERCULES", "C130", "HERCULES", "LOCKHEEDC130"],
+  "twin-otter-aerosoft": ["AEROSOFTTWINOTTER", "AEROSOFTDHC6", "TWINOTTER"]
 };
 
 // The catalog's `kind` is an operational subtype (for example, wide-body or
@@ -357,7 +495,7 @@ function aircraftManufacturerFamily(aircraft) {
 const passengerMissionKinds = new Set([
   "训练机", "通航单发", "通航双发", "单发涡桨", "双发涡桨", "支线客机",
   "支线干线", "干线喷气", "长程窄体", "宽体客机", "超大型客机",
-  "公务喷气", "轻型喷气", "远程公务", "直升机", "重型直升机"
+  "公务喷气", "轻型喷气", "远程公务", "直升机", "重型直升机", "超音速客机"
 ]);
 
 // These multi-purpose models do not share a passenger-specific `kind`, but
@@ -381,13 +519,13 @@ function hasMissionCapability(category, aircraft) {
 }
 
 const missionPolicies = {
-  客运: { min: 70, max: 1800, phases: ["日间", "傍晚"], kinds: ["训练机", "通航单发", "通航双发", "单发涡桨", "双发涡桨", "支线客机", "支线干线", "干线喷气", "长程窄体", "宽体客机", "超大型客机", "公务喷气", "轻型喷气", "远程公务", "直升机", "重型直升机"], label: "客运" },
+  客运: { min: 70, max: 1800, phases: ["日间", "傍晚"], kinds: ["训练机", "通航单发", "通航双发", "单发涡桨", "双发涡桨", "支线客机", "支线干线", "干线喷气", "长程窄体", "宽体客机", "超大型客机", "公务喷气", "轻型喷气", "远程公务", "直升机", "重型直升机", "超音速客机"], label: "客运" },
   货运: { min: 45, max: 2200, phases: ["傍晚", "夜间"], kinds: ["通航单发", "单发涡桨", "通用涡桨", "双发涡桨", "支线客机", "干线喷气", "货运喷气", "重型运输", "超大货运", "直升机", "重型直升机"], label: "货运" },
   包机: { min: 35, max: 1200, phases: ["日间", "傍晚"], kinds: ["训练机", "通航单发", "通航双发", "单发涡桨", "双发涡桨", "公务喷气", "轻型喷气", "远程公务", "直升机", "旋翼机", "复古飞机"], label: "包机" },
   医疗: { min: 30, max: 550, phases: ["全天候"], kinds: ["通航单发", "单发涡桨", "通用涡桨", "双发涡桨", "直升机", "重型直升机"], label: "医疗转运" },
-  搜救: { min: 8, max: 55, phases: ["日间", "傍晚"], kinds: ["野外短距", "通用涡桨", "直升机", "重型直升机", "水陆两栖"], label: "近场搜救" },
+  搜救: { min: 8, max: 55, phases: ["日间", "傍晚"], kinds: ["野外短距", "通用涡桨", "直升机", "重型直升机", "水陆两栖", "特种观测"], label: "近场搜救" },
   海上救援: { min: 15, max: 75, phases: ["日间", "傍晚"], kinds: ["水陆两栖", "直升机", "重型直升机"], label: "近海救援" },
-  事故调查: { min: 8, max: 60, phases: ["日间"], kinds: ["训练机", "通航单发", "野外短距", "通用涡桨", "直升机", "重型直升机", "旋翼机", "复古飞机"], label: "现场调查" }
+  事故调查: { min: 8, max: 60, phases: ["日间"], kinds: ["训练机", "通航单发", "野外短距", "通用涡桨", "直升机", "重型直升机", "旋翼机", "复古飞机", "特种观测"], label: "现场调查" }
 };
 
 const missionPools = {

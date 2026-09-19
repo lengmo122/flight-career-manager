@@ -1,6 +1,6 @@
 {
   "name": "flight-career-manager",
-  "version": "1.0.139",
+  "version": "1.0.140",
   "main": "electron-main.mjs",
   "description": "微软模拟飞行职业生涯与任务管理器",
   "author": "模飞生涯",

@@ -15,7 +15,8 @@
     "test:auto-connect": "node tests/simulator-auto-connect.test.mjs",
     "test:panels": "node tests/glassout-integration.test.mjs",
     "test:panels:native": "node tests/panel-native.test.mjs && node tests/panel-native.test.mjs --enhanced && node tests/panel-native.test.mjs --untracked && node tests/panel-native-lan.test.mjs",
-    "check": "node --check app.js && node --check server.mjs && node --check electron-main.mjs && node tests/aircraft-matching.test.mjs && node tests/aircraft-classification-and-passenger-missions.test.mjs && node tests/fuel-tracking.test.mjs && node tests/aircraft-maintenance.test.mjs && node tests/mission-refresh.test.mjs && node tests/mission-aircraft-location.test.mjs && node tests/mission-briefing.test.mjs && node tests/monitoring-runtime-log.test.mjs && node tests/simulator-lifecycle.test.mjs && node tests/map-heading.test.mjs && node tests/map-tracking.test.mjs && node tests/company-aircraft-map.test.mjs && node tests/native-dialogs.test.mjs && node tests/mission-progression.test.mjs && node tests/mission-scene-arrival-rules.test.mjs && node tests/mission-deletion.test.mjs && node tests/mission-manual-completion.test.mjs && node tests/career-landing-detection.test.mjs && node tests/starter-helicopter.test.mjs && node tests/msfs-flight-log.test.mjs && node tests/flight-distance-accumulation.test.mjs && node tests/route-continuity.test.mjs && node tests/flight-log-display.test.mjs && node tests/task-log-display.test.mjs && node tests/company-management.test.mjs && node tests/company-create-form.test.mjs && node tests/company-default-aircraft.test.mjs && node tests/company-applicant-list.test.mjs && node tests/company-pilot-aircraft-compatibility.test.mjs && node tests/pilot-input-validation.test.mjs && node tests/global-airports.test.mjs && node tests/fund-transactions.test.mjs && node tests/settings-speech.test.mjs && node tests/company-flight-log.test.mjs && node tests/schedule-import-removed.test.mjs && node tests/planned-route.test.mjs && node tests/support-dialog.test.mjs && node tests/about-dialog.test.mjs && node tests/avatar-upload.test.mjs && node tests/app-branding.test.mjs && node tests/aircraft-license-assessment.test.mjs && node tests/hangar-marketplace.test.mjs && node tests/save-encryption.test.mjs && node tests/desktop-persistent-storage.test.mjs && node tests/dark-theme.test.mjs && node tests/free-mode.test.mjs && node tests/dashboard-settlement.test.mjs && node tests/sop-mode.test.mjs && dotnet run --project tools/msfs-telemetry-source-tests/SkylineVA.Msfs2024Telemetry.Tests.csproj -c Release"
+    "check": "node --check app.js && node --check server.mjs && node --check electron-main.mjs && node tools/run-tests.mjs && dotnet run --project tools/msfs-telemetry-source-tests/SkylineVA.Msfs2024Telemetry.Tests.csproj -c Release",
+    "test:js": "node tools/run-tests.mjs"
   },
   "devDependencies": {
     "@electron/packager": "^20.3.0",
@@ -45,7 +46,11 @@
       {
         "from": "tools/panel-capture",
         "to": "panel-capture",
-        "filter": ["MofeiCapture.dll", "MofeiCaptureHost.exe", "MinHook-LICENSE.txt"]
+        "filter": [
+          "MofeiCapture.dll",
+          "MofeiCaptureHost.exe",
+          "MinHook-LICENSE.txt"
+        ]
       },
       {
         "from": "tools/msfs-telemetry",

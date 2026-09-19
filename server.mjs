@@ -710,8 +710,24 @@ async function proxyTile(res, layer, zoom, x, y) {
   }
 }
 
+// Every API route is reachable only from the application itself: the request must
+// target a loopback host, and a browser-supplied Origin / Sec-Fetch-Site must be
+// same-origin. This blocks cross-site pages and DNS-rebinding from driving the
+// simulator, speech or log endpoints.
+function isLocalAppRequest(req) {
+  if (!/^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(req.headers.host || "")) return false;
+  const origin = req.headers.origin;
+  if (origin && origin !== `http://${req.headers.host}`) return false;
+  if (req.headers["sec-fetch-site"] === "cross-site") return false;
+  return true;
+}
+
 const server = createServer(async (req, res) => {
   const url = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
+  if (url.pathname.startsWith("/api/") && !isLocalAppRequest(req)) {
+    respondJson(res, 403, { error: "Local application access only" });
+    return;
+  }
   const match = url.pathname.match(/^\/api\/map\/tianditu\/(vec|cva|img|cia)\/(\d{1,2})\/(\d+)\/(\d+)$/);
   if (req.method === "GET" && match) {
     await proxyTile(res, match[1], Number(match[2]), Number(match[3]), Number(match[4]));

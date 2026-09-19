@@ -886,7 +886,7 @@ export function startServer(requestedPort = port) {
   server.once("close", () => { void shutdownBridges(); });
     server.listen(requestedPort, "127.0.0.1", () => {
       server.off("error", reject);
-      if (requestedPort !== 0) recordRuntimeLog("info", "应用服务已启动", { port: server.address().port, version: "1.0.140" });
+      if (requestedPort !== 0) recordRuntimeLog("info", "应用服务已启动", { port: server.address().port, version: "1.0.141" });
       resolve({ server, port: server.address().port });
     });
   });

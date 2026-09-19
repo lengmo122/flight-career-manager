@@ -36,6 +36,13 @@ export GH_TOKEN=你的token
 npm run release:win
 ```
 
+打包环境注意：electron-builder 需要能直接调用 `pnpm`（收集生产依赖）。
+若提示 `No JSON content found in output`，先执行
+`corepack enable --install-directory ~/.corepack-bin pnpm` 并把该目录加入
+PATH。国内网络下载 Electron 二进制超时时，设置镜像：
+`ELECTRON_MIRROR=https://npmmirror.com/mirrors/electron/`、
+`ELECTRON_BUILDER_BINARIES_MIRROR=https://npmmirror.com/mirrors/electron-builder-binaries/`。
+
 electron-builder 会自动创建对应版本的 GitHub Release，上传安装包、
 `latest.yml` 与 blockmap（增量更新用）。用户侧旧版启动后即会收到更新。
 

@@ -478,16 +478,24 @@ function renderLogCard(log) {
 
 function renderHangar() {
   const families = [...new Set(aircraftCatalog.map(aircraftManufacturerFamily))].sort((a, b) => a.localeCompare(b, "zh-CN"));
+  const kinds = [...new Set(aircraftCatalog.map((aircraft) => aircraft.kind))].sort((a, b) => a.localeCompare(b, "zh-CN"));
   const current = families.includes(state.hangarFilter) ? state.hangarFilter : "all";
+  const currentKind = kinds.includes(state.hangarKindFilter) ? state.hangarKindFilter : "all";
   const query = String(state.hangarSearch || "").trim().toUpperCase();
   state.hangarFilter = current;
+  state.hangarKindFilter = currentKind;
   els.hangarFilter.innerHTML = `<option value="all">全部制造商</option>${families.map((family) => `<option value="${escapeHtml(family)}">${escapeHtml(family)}</option>`).join("")}`;
   els.hangarFilter.value = current;
+  if (els.hangarKindFilter) {
+    els.hangarKindFilter.innerHTML = `<option value="all">全部类型</option>${kinds.map((kind) => `<option value="${escapeHtml(kind)}">${escapeHtml(kind)}</option>`).join("")}`;
+    els.hangarKindFilter.value = currentKind;
+  }
   els.hangarSearch.value = state.hangarSearch || "";
   const visibleFleet = aircraftCatalog.filter((aircraft) => {
     const matchesFamily = current === "all" || aircraftManufacturerFamily(aircraft) === current;
+    const matchesKind = currentKind === "all" || aircraft.kind === currentKind;
     const searchable = `${aircraft.name} ${aircraftManufacturerFamily(aircraft)} ${aircraft.kind} ${aircraft.pace} ${aircraft.note}`.toUpperCase();
-    return matchesFamily && (!query || searchable.includes(query));
+    return matchesFamily && matchesKind && (!query || searchable.includes(query));
   });
   els.hangarGrid.innerHTML = visibleFleet.map(renderAircraftCard).join("") || emptyCard("没有符合条件的机型。");
 }

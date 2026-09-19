@@ -389,6 +389,12 @@ function bindEvents() {
     renderHangar();
   });
 
+  els.hangarKindFilter?.addEventListener("change", () => {
+    state.hangarKindFilter = els.hangarKindFilter.value;
+    saveState();
+    renderHangar();
+  });
+
   els.hangarSearch.addEventListener("input", () => {
     state.hangarSearch = els.hangarSearch.value;
     saveState();

@@ -484,11 +484,31 @@ const aircraftIdentityRules = {
 // turboprop) and is intentionally kept for mission/license rules.  The UI
 // needs a stable manufacturer grouping instead, so derive it from the catalog
 // identity/name without changing saved-fleet records.
+const manufacturerFamilyRules = [
+  ["空客", /AIRBUS|EUROCOPTER/, /^(a\d|a3|beluga|h1[0-9]|h2[0-9]|ec135|airbus-)/],
+  ["波音", /BOEING|MCDONNELL DOUGLAS/, /^(b\d|b738-|ch47d$|md-|t45$)/],
+  ["塞斯纳", /CESSNA|CITATION/, /^(c1\d\d|c2\d\d|c3\d\d|c4\d\d|cessna|cj4$|longitude$|citation-)/],
+  ["比奇", /BEECHCRAFT|BEECH /, /^(baron|bonanza|kingair|beech-)/],
+  ["派珀", /PIPER /, /^(pa\d\d|warrior|twin-comanche|comanche-)/],
+  ["钻石", /DIAMOND /, /^(da\d\d|dv\d\d)/],
+  ["西锐", /CIRRUS /, /^(cirrus|sf50$|vision-)/],
+  ["皮拉图斯", /PILATUS /, /^(pc\d|pc12-)/],
+  ["达赫", /DAHER |TBM |KODIAK/, /^(tbm|kodiak-)/],
+  ["德哈维兰", /DE HAVILLAND|DHC-/, /^(dhc|dash8-)/],
+  ["巴航工业", /EMBRAER |PHENOM |PRAETOR /, /^(e1\d\d|e19\d|phenom-|praetor-)/],
+  ["庞巴迪", /BOMBARDIER |CHALLENGER |CRJ-/, /^(crj-|challenger-)/],
+  ["ATR", /^ATR |ATR \d/, /^atr/],
+  ["罗宾逊", /ROBINSON /, /^(r\d\d$|r66$)/],
+  ["贝尔", /BELL /, /^(bell-|uh1h$)/],
+  ["道格拉斯", /DOUGLAS DC|LOCKHEED/, /^(dc\d|dc6$|md-11$|l1011$|dc-designs-|sr71$)/]
+];
+
 function aircraftManufacturerFamily(aircraft) {
   const id = String(aircraft?.catalogId || aircraft?.id || "").trim().toLowerCase();
   const text = `${aircraft?.manufacturer || ""} ${aircraft?.name || ""} ${aircraft?.title || ""} ${aircraft?.aircraftTitle || ""}`.toUpperCase();
-  if (text.includes("AIRBUS") || /^(a|beluga)/.test(id)) return "空客";
-  if (text.includes("BOEING") || /^(b\d|b738-|ch47d$)/.test(id)) return "波音";
+  for (const [family, textRule, idRule] of manufacturerFamilyRules) {
+    if (textRule.test(text) || idRule.test(id)) return family;
+  }
   return "其他制造商";
 }
 

@@ -18,6 +18,7 @@ function defaultState() {
     schedules: [],
     backups: [],
     hangarFilter: "all",
+    hangarKindFilter: "all",
     hangarSearch: "",
     aircraftManagementFilter: "all",
     aircraftManagementSearch: "",
@@ -166,6 +167,7 @@ function mergeState(base, incoming) {
   merged.schedules = Array.isArray(incoming.schedules) ? incoming.schedules : merged.schedules;
   merged.backups = Array.isArray(incoming.backups) ? incoming.backups : merged.backups;
   merged.hangarFilter = typeof incoming.hangarFilter === "string" ? incoming.hangarFilter : merged.hangarFilter;
+  merged.hangarKindFilter = typeof incoming.hangarKindFilter === "string" ? incoming.hangarKindFilter : merged.hangarKindFilter;
   merged.hangarSearch = typeof incoming.hangarSearch === "string" ? incoming.hangarSearch : merged.hangarSearch;
   merged.aircraftManagementFilter = typeof incoming.aircraftManagementFilter === "string" ? incoming.aircraftManagementFilter : merged.aircraftManagementFilter;
   merged.aircraftManagementSearch = typeof incoming.aircraftManagementSearch === "string" ? incoming.aircraftManagementSearch : merged.aircraftManagementSearch;

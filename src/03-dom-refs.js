@@ -93,6 +93,7 @@ const els = {
   simulatorMissionState: document.getElementById("simulatorMissionState"),
   hangarGrid: document.getElementById("hangarGrid"),
   hangarFilter: document.getElementById("hangarFilter"),
+  hangarKindFilter: document.getElementById("hangarKindFilter"),
   hangarSearch: document.getElementById("hangarSearch"),
   aircraftManagementSummary: document.getElementById("aircraftManagementSummary"),
   aircraftManagementGrid: document.getElementById("aircraftManagementGrid"),

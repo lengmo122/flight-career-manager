@@ -31,9 +31,27 @@ vm.runInNewContext([
 const byId = (id) => context.catalog.find((aircraft) => aircraft.id === id);
 assert.equal(context.family(byId("a320")), "空客");
 assert.equal(context.family(byId("a319")), "空客");
+assert.equal(context.family(byId("h125")), "空客");
 assert.equal(context.family(byId("b738")), "波音");
 assert.equal(context.family(byId("b738-bdsf")), "波音");
-assert.equal(context.family(byId("c172")), "其他制造商");
+assert.equal(context.family(byId("md-82")), "波音");
+assert.equal(context.family(byId("c172")), "塞斯纳");
+assert.equal(context.family(byId("cj4")), "塞斯纳");
+assert.equal(context.family(byId("kingair-350")), "比奇");
+assert.equal(context.family(byId("pa28-arrow")), "派珀");
+assert.equal(context.family(byId("da62")), "钻石");
+assert.equal(context.family(byId("cirrus-sr22")), "西锐");
+assert.equal(context.family(byId("pc12")), "皮拉图斯");
+assert.equal(context.family(byId("tbm")), "达赫");
+assert.equal(context.family(byId("dash8-q400")), "德哈维兰");
+assert.equal(context.family(byId("e190")), "巴航工业");
+assert.equal(context.family(byId("crj-900")), "庞巴迪");
+assert.equal(context.family(byId("atr72")), "ATR");
+assert.equal(context.family(byId("r66")), "罗宾逊");
+assert.equal(context.family(byId("bell-407")), "贝尔");
+assert.equal(context.family(byId("dc3")), "道格拉斯");
+assert.equal(context.family(byId("concorde")), "其他制造商");
+assert.equal(context.family(byId("cabri-g2")), "其他制造商");
 
 [
   "a320", "a319", "a330", "a380-800", "b738", "b748", "b789",

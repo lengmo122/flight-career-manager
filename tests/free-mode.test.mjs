@@ -1,8 +1,9 @@
+import { readAppSource } from "./helpers/app-source.mjs";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import vm from "node:vm";
 
-const app = await readFile(new URL("../app.js", import.meta.url), "utf8");
+const app = await readAppSource();
 const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
 
 assert.match(html, /id="freeModeToggle"[\s\S]*?aria-label="自由模式"/, "settings must expose a free mode switch");

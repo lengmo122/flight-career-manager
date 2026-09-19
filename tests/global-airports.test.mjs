@@ -1,8 +1,9 @@
+import { readAppSource } from "./helpers/app-source.mjs";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const data = JSON.parse(await readFile(new URL("../assets/data/global-airports-zh.json", import.meta.url), "utf8"));
-const appSource = await readFile(new URL("../app.js", import.meta.url), "utf8");
+const appSource = await readAppSource();
 
 assert.ok(data.airports.length >= 10000, "global airport catalog should contain all four-letter ICAO airports");
 assert.equal(new Set(data.airports.map((airport) => airport.icao)).size, data.airports.length, "airport ICAO codes should be unique");

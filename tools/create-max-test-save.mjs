@@ -3,7 +3,8 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(fileURLToPath(new URL("..", import.meta.url)));
-const source = await readFile(join(root, "app.js"), "utf8");
+const { readAppSource } = await import("../tests/helpers/app-source.mjs");
+const source = await readAppSource();
 const catalogSource = source.slice(source.indexOf("const aircraftCatalog = ["), source.indexOf("];", source.indexOf("const aircraftCatalog = [")));
 const aircraftCatalog = [...catalogSource.matchAll(/\{ id: "([^"]+)", name: "([^"]+)", kind: "([^"]+)", price: ([\d.]+), rent: ([\d.]+), range: ([\d.]+), pace: "([^"]+)", unlockHours: ([\d.]+), note: "([^"]*)" \}/g)]
   .map(([, id, name, kind, price, rent, range, pace, unlockHours, note]) => ({

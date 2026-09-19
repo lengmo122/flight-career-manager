@@ -57,7 +57,6 @@ for (const dependency of runtimeDependencyNames) {
 const appFiles = [
   "index.html",
   "styles.css",
-  "app.js",
   "terrain.js",
   "server.mjs",
   "panel-agent.mjs",
@@ -70,6 +69,7 @@ const appFiles = [
 ];
 await Promise.all(appFiles.map((file) => cp(join(root, file), join(stage, file))));
 await cp(join(root, "assets"), join(stage, "assets"), { recursive: true });
+await cp(join(root, "src"), join(stage, "src"), { recursive: true });
 await writeFile(join(stage, "package.json"), JSON.stringify({
   name: "flight-career-manager",
   productName: "模飞生涯",

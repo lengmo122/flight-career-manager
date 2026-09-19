@@ -1,7 +1,8 @@
+import { readAppSource } from "./helpers/app-source.mjs";
 import assert from "node:assert/strict";
 import { readdir, readFile } from "node:fs/promises";
 
-const appSource = await readFile(new URL("../app.js", import.meta.url), "utf8");
+const appSource = await readAppSource();
 const htmlSource = await readFile(new URL("../index.html", import.meta.url), "utf8");
 const logoFiles = new Set(await readdir(new URL("../assets/logos/", import.meta.url)));
 

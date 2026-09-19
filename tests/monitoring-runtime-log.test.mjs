@@ -2,10 +2,12 @@ import assert from 'node:assert/strict';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { readAppSource } from './helpers/app-source.mjs';
 
 const root = new URL('../', import.meta.url);
-const [html, app, styles, serverSource] = await Promise.all(['index.html', 'app.js', 'styles.css', 'server.mjs']
+const [html, styles, serverSource] = await Promise.all(['index.html', 'styles.css', 'server.mjs']
   .map((name) => readFile(new URL(name, root), 'utf8')));
+const app = await readAppSource();
 
 assert.match(html, /data-view="monitor"/);
 assert.match(html, /id="monitorView"/);

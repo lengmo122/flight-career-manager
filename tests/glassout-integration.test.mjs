@@ -1,3 +1,4 @@
+import { readAppSource } from './helpers/app-source.mjs';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { once } from 'node:events';
@@ -5,7 +6,8 @@ import WebSocket from 'ws';
 import { PanelService, panelLanHosts } from '../panel-service.mjs';
 import { FrameParser } from '../panel-native.mjs';
 
-const [html, app, serverSource] = await Promise.all(['index.html', 'app.js', 'server.mjs'].map(name => readFile(new URL(`../${name}`, import.meta.url), 'utf8')));
+const [html, serverSource] = await Promise.all(['index.html', 'server.mjs'].map(name => readFile(new URL(`../${name}`, import.meta.url), 'utf8')));
+const app = await readAppSource();
 assert.doesNotMatch(html, /data-view="glassout"|id="glassoutView"|截取面板/);
 assert.doesNotMatch(app, /\/api\/panels\/|glassout|glassOut|panelCapture|panelPreview/);
 assert.doesNotMatch(serverSource, /api\/glassout|normalizeGlassOutTarget|glassOutStatus\(/);
@@ -23,7 +25,7 @@ try {
   assert.equal(status.independent, true); assert.equal(status.panels[0].gpuMatched, false);
   assert.equal(stops, 0, 'Scanning must not load a capture DLL');
   const base = `http://127.0.0.1:${status.port}`;
-  for (const path of ['/api/panels/status', '/api/simulator/start', '/app.js', '/server.mjs', '/api/save']) {
+  for (const path of ['/api/panels/status', '/api/simulator/start', '/src/01-save-storage.js', '/server.mjs', '/api/save']) {
     assert.equal((await fetch(base + path)).status, 404, 'LAN service must not expose the career application');
   }
   const viewerResponse = await fetch(base + '/panel/1-0');

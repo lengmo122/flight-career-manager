@@ -15,7 +15,7 @@
     "test:auto-connect": "node tests/simulator-auto-connect.test.mjs",
     "test:panels": "node tests/glassout-integration.test.mjs",
     "test:panels:native": "node tests/panel-native.test.mjs && node tests/panel-native.test.mjs --enhanced && node tests/panel-native.test.mjs --untracked && node tests/panel-native-lan.test.mjs",
-    "check": "node --check app.js && node --check server.mjs && node --check electron-main.mjs && node tools/run-tests.mjs && dotnet run --project tools/msfs-telemetry-source-tests/SkylineVA.Msfs2024Telemetry.Tests.csproj -c Release",
+    "check": "node tools/check-syntax.mjs && node tools/run-tests.mjs && dotnet run --project tools/msfs-telemetry-source-tests/SkylineVA.Msfs2024Telemetry.Tests.csproj -c Release",
     "test:js": "node tools/run-tests.mjs"
   },
   "devDependencies": {
@@ -30,7 +30,7 @@
     "files": [
       "index.html",
       "styles.css",
-      "app.js",
+      "src/**/*",
       "terrain.js",
       "server.mjs",
       "panel-agent.mjs",

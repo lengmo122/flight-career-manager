@@ -1,9 +1,11 @@
+import { readAppSource } from './helpers/app-source.mjs';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 
-const [html, app, styles, server] = await Promise.all(['index.html', 'app.js', 'styles.css', 'server.mjs']
+const [html, styles, server] = await Promise.all(['index.html', 'styles.css', 'server.mjs']
   .map((name) => readFile(new URL(`../${name}`, import.meta.url), 'utf8')));
+const app = await readAppSource();
 
 assert.match(html, /class="mission-list mission-open-list" id="missionsList"/);
 assert.match(app, /visibleMissions\.map\(renderMissionListItem\)/);

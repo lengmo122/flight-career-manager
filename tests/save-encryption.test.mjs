@@ -1,10 +1,11 @@
+import { readAppSource } from "./helpers/app-source.mjs";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const source = await readFile(path.join(root, "app.js"), "utf8");
+const source = await readAppSource();
 
 assert.match(source, /SAVE_ENVELOPE_FORMAT\s*=\s*["']flight-career-save-aes-gcm-v1/);
 assert.match(source, /name:\s*["']AES-GCM["']/);

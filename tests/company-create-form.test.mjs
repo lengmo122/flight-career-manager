@@ -1,7 +1,8 @@
+import { readAppSource } from "./helpers/app-source.mjs";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-const appSource = await readFile(new URL("../app.js", import.meta.url), "utf8");
+const appSource = await readAppSource();
 const cssSource = await readFile(new URL("../styles.css", import.meta.url), "utf8");
 
 assert.match(appSource, /id="companyNameInput"[^>]+type="text"[^>]+inputmode="latin"[^>]+minlength="3"[^>]+maxlength="3"/, "company name field should accept a three-letter airline code");

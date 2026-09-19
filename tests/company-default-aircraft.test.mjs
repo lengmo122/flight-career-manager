@@ -1,7 +1,8 @@
+import { readAppSource } from "./helpers/app-source.mjs";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-const appSource = await readFile(new URL("../app.js", import.meta.url), "utf8");
+const appSource = await readAppSource();
 
 assert.match(appSource, /function createCompanyAircraft\(selectedId = ""\)/, "company creation should build a dedicated aircraft record");
 assert.match(appSource, /aircraftCatalog\.filter\(\(aircraft\) => aircraft\.kind === "干线喷气"\)/, "the starter aircraft pool should contain only trunk jets");

@@ -5,7 +5,8 @@ import { fileURLToPath } from "node:url";
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const sourcePath = join(root, "tools", "msfs-telemetry", "data", "airport-catalog.json");
 const outputPath = join(root, "assets", "data", "global-airports-zh.json");
-const appSource = await readFile(join(root, "app.js"), "utf8");
+const { readAppSource } = await import("../tests/helpers/app-source.mjs");
+const appSource = await readAppSource();
 const catalog = JSON.parse(await readFile(sourcePath, "utf8"));
 const regionNames = new Intl.DisplayNames(["zh-CN"], { type: "region", fallback: "none" });
 const knownChineseNames = new Map(

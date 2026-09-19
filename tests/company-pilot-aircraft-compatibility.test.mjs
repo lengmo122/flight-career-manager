@@ -1,7 +1,8 @@
+import { readAppSource } from "./helpers/app-source.mjs";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
-const appSource = await readFile(new URL("../app.js", import.meta.url), "utf8");
+const appSource = await readAppSource();
 
 assert.match(appSource, /function normalizeAircraftKinds\(/, "pilot aircraft capabilities should have a shared normalizer");
 assert.match(appSource, /aircraftKinds,\n\s+aircraftKind: aircraftKinds\[0\]/, "new pilots should retain an array and legacy primary kind");

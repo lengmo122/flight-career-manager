@@ -1,8 +1,9 @@
+import { readAppSource } from "./helpers/app-source.mjs";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const [source, html] = await Promise.all([
-  readFile(new URL("../app.js", import.meta.url), "utf8"),
+  readAppSource(),
   readFile(new URL("../index.html", import.meta.url), "utf8")
 ]);
 

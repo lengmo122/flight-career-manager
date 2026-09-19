@@ -1201,19 +1201,44 @@ function uniqueTaskEvents(events) {
   });
 }
 
-function saveState() {
-  if (saveStorageError && saveStorageHydrated) return saveWriteChain;
-  const snapshot = structuredClone(state);
-  saveWriteChain = saveWriteChain
-    .catch(() => {})
-    .then(async () => {
-      await writeStorageValue(STORAGE_KEY, await encryptSaveText(JSON.stringify(snapshot)));
-    })
-    .catch((error) => {
-      saveStorageError = error;
-    });
+// Renders call saveState() on every state change, including the 2s simulator poll.
+// Writes are debounced so repeated calls coalesce into one clone+encrypt+disk write;
+// awaiting saveState() still resolves only after the coalesced write has completed.
+const SAVE_STATE_DEBOUNCE_MS = 800;
+let saveStateTimer = 0;
+let saveStateWaiters = [];
+
+function persistStateNow() {
+  if (saveStateTimer) {
+    window.clearTimeout(saveStateTimer);
+    saveStateTimer = 0;
+  }
+  if (!(saveStorageError && saveStorageHydrated)) {
+    const snapshot = structuredClone(state);
+    saveWriteChain = saveWriteChain
+      .catch(() => {})
+      .then(async () => {
+        await writeStorageValue(STORAGE_KEY, await encryptSaveText(JSON.stringify(snapshot)));
+      })
+      .catch((error) => {
+        saveStorageError = error;
+      });
+  }
+  const waiters = saveStateWaiters;
+  saveStateWaiters = [];
+  for (const resolve of waiters) resolve(saveWriteChain);
   return saveWriteChain;
 }
+
+function saveState() {
+  if (saveStorageError && saveStorageHydrated) return saveWriteChain;
+  if (!saveStateTimer) saveStateTimer = window.setTimeout(persistStateNow, SAVE_STATE_DEBOUNCE_MS);
+  return new Promise((resolve) => saveStateWaiters.push(resolve));
+}
+
+window.addEventListener("beforeunload", () => {
+  if (saveStateTimer) persistStateNow();
+});
 
 function openingFundTransaction(balance, date = Date.now()) {
   const amount = Number.isFinite(Number(balance)) ? Number(balance) : 0;

@@ -11,7 +11,33 @@ npm start             # 仅启动本地服务（浏览器访问 http://localhost
 npm run test:js       # 并行运行全部 JS 测试（node --test）
 npm run check         # 语法检查 + JS 测试 + .NET 遥测测试
 npm run dist:win      # 打包 Windows 版本
+npm run release:win   # 打包 NSIS 安装包并发布到 GitHub Releases（需 GH_TOKEN）
 ```
+
+## 发版与自动更新
+
+应用通过 [electron-updater](https://www.electron.build/auto-update) 从
+GitHub Releases（`lengmo122/flight-career-manager`）自动更新：启动 5 秒后
+静默检查，新版本下载完成后提示重启安装（选择"稍后"则下次退出时自动装）。
+开发模式与快速目录版不检查更新，离线时静默跳过。
+
+发版步骤：
+
+1. 把 `package.json` 的 `version` 加一号（自动更新靠版本号比对）。
+2. 设置发布 Token（GitHub Fine-grained token，只需该仓库 Contents 读写权限）：
+
+```bash
+export GH_TOKEN=你的token
+```
+
+3. 打包并发布：
+
+```bash
+npm run release:win
+```
+
+electron-builder 会自动创建对应版本的 GitHub Release，上传安装包、
+`latest.yml` 与 blockmap（增量更新用）。用户侧旧版启动后即会收到更新。
 
 ## 代码结构
 

@@ -16,7 +16,8 @@
     "test:panels": "node tests/glassout-integration.test.mjs",
     "test:panels:native": "node tests/panel-native.test.mjs && node tests/panel-native.test.mjs --enhanced && node tests/panel-native.test.mjs --untracked && node tests/panel-native-lan.test.mjs",
     "check": "node tools/check-syntax.mjs && node tools/run-tests.mjs && dotnet run --project tools/msfs-telemetry-source-tests/SkylineVA.Msfs2024Telemetry.Tests.csproj -c Release",
-    "test:js": "node tools/run-tests.mjs"
+    "test:js": "node tools/run-tests.mjs",
+    "release:win": "electron-builder --win nsis --publish always"
   },
   "devDependencies": {
     "@electron/packager": "^20.3.0",
@@ -66,15 +67,23 @@
       }
     ],
     "win": {
-      "target": "portable",
+      "target": "nsis",
       "signExecutable": false
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
-    }
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "lengmo122",
+        "repo": "flight-career-manager"
+      }
+    ]
   },
   "dependencies": {
+    "electron-updater": "^6.8.9",
     "node-edge-tts": "^1.2.10",
     "ws": "8.18.3"
   }

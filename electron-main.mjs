@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from "electron";
+import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { isAbsolute, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -96,6 +96,37 @@ if (!hasSingleInstanceLock) {
   app.quit();
 }
 
+// 自动更新：从 GitHub Releases 检查新版本，下载完成后询问是否重启安装。
+// 未打包（开发模式）、快速目录版（不含 electron-updater）或离线时静默跳过。
+async function setupAutoUpdater() {
+  if (!app.isPackaged) return;
+  let autoUpdater;
+  try {
+    const mod = await import("electron-updater");
+    autoUpdater = mod.autoUpdater ?? mod.default?.autoUpdater;
+  } catch {
+    return;
+  }
+  if (!autoUpdater) return;
+  autoUpdater.autoDownload = true;
+  autoUpdater.autoInstallOnAppQuit = true;
+  autoUpdater.on("update-downloaded", (info) => {
+    if (!mainWindow || mainWindow.isDestroyed()) return;
+    const choice = dialog.showMessageBoxSync(mainWindow, {
+      type: "info",
+      buttons: ["立即重启更新", "稍后"],
+      defaultId: 0,
+      cancelId: 1,
+      title: "发现新版本",
+      message: `新版本 ${info.version} 已下载完成`,
+      detail: "点击“立即重启更新”完成安装；选择“稍后”则会在下次退出应用时自动安装。"
+    });
+    if (choice === 0) autoUpdater.quitAndInstall();
+  });
+  autoUpdater.on("error", () => {});
+  setTimeout(() => { autoUpdater.checkForUpdates().catch(() => {}); }, 5000);
+}
+
 async function createWindow() {
   const persistenceTestMode = process.env.FLIGHT_MANAGER_PERSISTENCE_TEST === "1";
   process.env.FLIGHT_MANAGER_TELEMETRY_EXE = join(process.resourcesPath, "telemetry", "SkylineVA.Msfs2024Telemetry.exe");
@@ -126,6 +157,7 @@ async function createWindow() {
   mainWindow.once("ready-to-show", () => {
     if (!persistenceTestMode) mainWindow?.show();
   });
+  setupAutoUpdater().catch(() => {});
     await mainWindow.loadURL(`http://127.0.0.1:${running.port}/?v=${app.getVersion()}`);
 }
 

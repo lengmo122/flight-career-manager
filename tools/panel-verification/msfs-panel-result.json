@@ -1,0 +1,17 @@
+{
+  "panel": {
+    "id": "22-2",
+    "name": "CDUScreen",
+    "width": 666,
+    "height": 564,
+    "gpuMatched": false
+  },
+  "frames": 0,
+  "phase": "error",
+  "error": "no-frames",
+  "message": "尚未收到面板画面。当前仅支持 DirectX 12；此面板或渲染路径可能不兼容。",
+  "fps": 0,
+  "viewers": 1,
+  "frameAgeMs": null,
+  "nativeState": 2
+}

@@ -1,0 +1,11 @@
+node_modules/
+release-app*/
+release-fast-*/
+release-installer-*/
+dist/
+out/
+__pycache__/
+*.log
+debug*.png
+verification-*.png
+render_*.png

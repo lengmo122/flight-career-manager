@@ -1,0 +1,875 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>模飞生涯</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./assets/vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="./styles.css">
+  <script>
+    if (window.location.protocol === "file:") window.location.replace("http://localhost:4174/");
+  </script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+  <script src="./assets/vendor/leaflet/leaflet.js" defer></script>
+  <script src="./terrain.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body class="auth-only">
+  <section class="login-gate" id="loginGate">
+    <div class="login-support">
+      <span>开发不易，支持一下</span>
+      <button class="support-btn" id="supportBtn" type="button" aria-label="支持开发者" title="支持开发者"><i data-lucide="heart-handshake"></i><span>支持</span></button>
+    </div>
+    <form class="login-entry" id="pilotForm">
+      <div class="login-entry-head">
+        <div class="brand-mark" aria-hidden="true"><i data-lucide="plane"></i></div>
+        <div>
+          <h1>飞行员登录</h1>
+          <p>模飞生涯</p>
+        </div>
+      </div>
+      <div class="login-profile-layout">
+        <div class="login-profile-fields">
+          <label class="field login-field">
+            <span>飞行员呼号</span>
+            <input id="pilotNameInput" type="text" required minlength="2" maxlength="32" inputmode="numeric" pattern="[0-9]{2,32}" autocomplete="off">
+          </label>
+          <label class="field login-field">
+            <span>基地机场</span>
+            <input id="pilotBaseInput" type="text" required minlength="4" maxlength="4" inputmode="text" pattern="[A-Za-z]{4}" placeholder="输入四位 ICAO" autocomplete="off" spellcheck="false">
+          </label>
+        </div>
+        <div class="login-avatar-panel">
+          <div class="login-avatar-preview avatar" id="pilotAvatarPreview" aria-label="飞行员头像预览">AX</div>
+          <div class="avatar-choice-head"><span>选择头像</span><span class="avatar-choice-status" id="avatarChoiceStatus">默认头像</span></div>
+          <div class="avatar-choice-grid" id="avatarChoiceGrid" aria-label="头像选择"></div>
+          <input id="pilotAvatarFile" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+          <button class="ghost-btn login-avatar-btn" id="uploadAvatarBtn" type="button"><i data-lucide="upload"></i><span>上传头像</span></button>
+        </div>
+      </div>
+      <button class="primary-btn login-submit" id="pilotSubmitBtn" type="submit"><i data-lucide="log-in"></i><span>进入系统</span></button>
+    </form>
+  </section>
+
+  <dialog class="modal support-modal" id="supportModal">
+    <form method="dialog" class="modal-card support-card">
+      <div class="modal-head">
+        <div>
+          <h2>支持开发者</h2>
+          <p>感谢你的支持，让项目继续变得更好。</p>
+        </div>
+        <button class="icon-btn" value="cancel" aria-label="关闭" type="submit"><i data-lucide="x"></i></button>
+      </div>
+      <div class="support-grid">
+        <figure class="support-qr">
+          <img src="./assets/support/alipay.png" alt="支付宝收款二维码">
+          <figcaption>支付宝</figcaption>
+        </figure>
+        <figure class="support-qr">
+          <img src="./assets/support/wechat.png" alt="微信收款二维码">
+          <figcaption>微信</figcaption>
+        </figure>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal contact-modal" id="contactModal">
+    <form method="dialog" class="modal-card contact-card">
+      <div class="modal-head">
+        <div>
+          <h2>联系作者</h2>
+          <p>通过 QQ 群或视频平台联系作者。</p>
+        </div>
+        <button class="icon-btn" value="cancel" aria-label="关闭" type="submit"><i data-lucide="x"></i></button>
+      </div>
+      <div class="contact-group-row">
+        <div>
+          <span>QQ 群</span>
+          <strong id="authorQqGroup">1048217475</strong>
+        </div>
+        <button class="ghost-btn" id="copyAuthorQqBtn" type="button"><i data-lucide="copy"></i><span>复制群号</span></button>
+      </div>
+      <div class="contact-platform-list" aria-label="作者视频平台">
+        <div class="contact-platform-row">
+          <span class="contact-platform-icon" aria-hidden="true"><img src="./assets/support/douyin.png" alt=""></span>
+          <div>
+            <span>抖音</span>
+            <strong>搜索 游戏老啸</strong>
+          </div>
+        </div>
+        <div class="contact-platform-row">
+          <span class="contact-platform-icon" aria-hidden="true"><img src="./assets/support/bilibili.png" alt=""></span>
+          <div>
+            <span>B站</span>
+            <strong>搜索 游戏老啸</strong>
+          </div>
+        </div>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal about-modal" id="aboutModal">
+    <form method="dialog" class="modal-card about-card">
+      <div class="modal-head">
+        <div>
+          <h2>软件说明</h2>
+          <p>模飞生涯 · 版本 1.0.139</p>
+        </div>
+        <button class="icon-btn" value="cancel" aria-label="关闭" type="submit"><i data-lucide="x"></i></button>
+      </div>
+      <div class="about-content">
+        <p class="about-intro">模飞生涯是 Microsoft Flight Simulator 的本地职业生涯管理工具。它负责记录你的飞行员成长、飞机资产、任务结算和航空公司运营；实际飞行仍在 MSFS 中完成。</p>
+        <ol class="about-steps">
+          <li><strong>首次登录</strong><span>输入飞行员姓名和数字呼号，可上传头像。保存后会建立本地档案，并提供一架初始可用直升机。</span></li>
+          <li><strong>连接 MSFS</strong><span>软件启动后会在后台等待 Microsoft Flight Simulator。检测到 MSFS 2020 或 2024 的 SimConnect 可用时会自动连接并读取飞机、位置、航向和实际燃油；左侧“连接 MSFS”按钮保留用于手动重试。</span></li>
+          <li><strong>接受并完成任务</strong><span>在“任务”中选择普通或紧急任务，查看起飞机场、目的机场、任务类型和机型要求后接受。起飞前确认飞机和燃油，按任务要求飞行；飞机在目的机场完成接地并通过机场校验后，任务才会自动结束并结算。</span></li>
+          <li><strong>接地与事故判定</strong><span>软件根据 MSFS 实时接地数据记录起飞和降落。接地载荷高于 3G 视为坠机，相关飞机会从机库移除；连续两次接地会按弹跳处理。异常或未落地时不会提前结束任务。</span></li>
+          <li><strong>自由模式</strong><span>可在“设置”中开启。开启后个人资金临时调整为 100 万，飞机市场取消飞行小时限制，任务不限制机型和执照，也不读取接地数据或计算接地磨损。关闭自由模式后，个人资金会恢复为开启前的余额。</span></li>
+          <li><strong>个人飞机与执照</strong><span>在“飞机市场”可重复购买或租赁同一机型；交易后的每架飞机会独立加入“飞机管理”，可在那里设置默认飞机、加油、维修、出售或归还。燃油滑块会随遥测油量更新；机型执照购买后，还必须完成对应的考核任务才会解锁该机型。</span></li>
+          <li><strong>创建和运营航空公司</strong><span>达到机长等级或个人资金不少于 100 万后，可在“航空公司”创建公司。输入三字航空公司代码会自动显示对应名称，再选择公司基地和飞机。公司内可招聘、解雇和派遣具备对应机型资格的飞行员，并管理公司机库和资金。</span></li>
+          <li><strong>查看记录和地图</strong><span>“飞行日志”记录所有已完成的航班任务，包括起飞、降落和接地结果；“任务日志”显示当前任务的实时阶段。地图可切换深色或卫星底图，并可开启公司飞机位置显示，不显示飞行轨迹。</span></li>
+          <li><strong>设置、存档和重置</strong><span>顶栏太阳或月亮按钮可直接切换界面主题，齿轮按钮可调整语音播报音量和任务规则。存档会加密保存在本机，建议定期备份；“重置所有数据”会删除个人、飞机、任务、公司和日志数据，操作前请确认。</span></li>
+        </ol>
+        <p class="about-note"><strong>推荐流程：</strong>启动模飞生涯并等待自动连接 → 启动 MSFS 并进入飞行 → 检查飞机燃油和维修状态 → 接受任务 → 在目的机场安全落地 → 返回软件确认任务和飞行日志已结算。</p>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="app-shell" id="appShell" hidden>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"><i data-lucide="plane"></i></div>
+        <div>
+          <h1>模飞生涯</h1>
+          <p>模拟飞行生涯模式</p>
+        </div>
+      </div>
+      <nav class="tabs" aria-label="主视图">
+        <button class="tab is-active" type="button" data-view="dashboard"><i data-lucide="layout-dashboard"></i><span>总览</span></button>
+        <button class="tab" type="button" data-view="missions"><i data-lucide="route"></i><span>任务</span></button>
+        <button class="tab" type="button" data-view="map"><i data-lucide="map"></i><span>地图</span></button>
+        <button class="tab" type="button" data-view="logs"><i data-lucide="notebook-tabs"></i><span>飞行日志</span></button>
+        <button class="tab" type="button" data-view="achievements"><i data-lucide="trophy"></i><span>成就</span></button>
+        <button class="tab" type="button" data-view="profile"><i data-lucide="contact-round"></i><span>个人信息</span></button>
+        <button class="tab" type="button" data-view="schedules"><i data-lucide="calendar-clock"></i><span>计划表</span></button>
+        <button class="tab" type="button" data-view="hangar"><i data-lucide="warehouse"></i><span>飞机市场</span></button>
+        <button class="tab" type="button" data-view="aircraft-management"><i data-lucide="plane"></i><span>飞机管理</span></button>
+        <button class="tab" type="button" data-view="company"><i data-lucide="building-2"></i><span>航空公司</span></button>
+      </nav>
+      <div class="top-actions">
+        <button class="icon-btn theme-mode-btn" id="themeModeBtn" type="button" aria-label="当前浅色模式，点击切换为深色模式" title="切换为深色模式">
+          <i data-lucide="sun" class="theme-icon sun-icon" aria-hidden="true"></i>
+          <i data-lucide="moon" class="theme-icon moon-icon" aria-hidden="true"></i>
+        </button>
+        <button class="ghost-btn contact-author-btn" id="contactAuthorBtn" type="button"><i data-lucide="circle-user-round"></i><span>联系作者</span></button>
+        <button class="icon-btn settings-btn" id="settingsBtn" type="button" aria-label="设置" title="设置"><i data-lucide="settings"></i></button>
+        <button class="ghost-btn" id="importBtn" type="button"><i data-lucide="upload"></i><span>导入</span></button>
+        <button class="primary-btn" id="exportBtn" type="button"><i data-lucide="download"></i><span>导出存档</span></button>
+        <input id="importFile" type="file" accept="application/json" hidden>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <aside class="sidebar left-sidebar">
+        <section class="panel">
+          <div class="section-head">
+            <h2>飞行员档案</h2>
+            <button class="ghost-btn login-btn" id="loginPilotBtn" type="button"><i data-lucide="log-in"></i><span>登录</span></button>
+          </div>
+          <div class="pilot-card">
+            <div class="avatar" id="pilotInitials">AX</div>
+            <div class="pilot-main">
+              <strong id="pilotName">Alex Chen</strong>
+              <span id="pilotRank">副驾</span>
+            </div>
+          </div>
+          <div class="progress-block">
+            <div class="progress-row">
+              <span id="nextRankLabel">距离机长</span>
+              <strong id="rankProgressText">0 / 120 小时</strong>
+            </div>
+            <div class="meter" aria-label="晋升进度"><span id="rankMeter"></span></div>
+          </div>
+          <div class="mini-stats">
+            <div><span>飞行小时</span><strong id="totalHours">0.0</strong></div>
+            <div><span>声望</span><strong id="reputation">0</strong></div>
+            <div><span>资产</span><strong id="balance">$0</strong></div>
+          </div>
+        </section>
+
+        <section class="panel" id="airlinePanel">
+          <div class="section-head">
+            <h2 id="airlinePanelTitle">就职航空公司</h2>
+          </div>
+          <div class="airline-meta" id="airlineMeta"></div>
+        </section>
+
+        <section class="panel simulator-panel">
+          <div class="section-head">
+            <h2>模拟器连接</h2>
+            <span class="tag warn" id="simulatorStatus">未连接</span>
+          </div>
+          <div class="simulator-meta">
+            <strong id="simulatorAircraft">等待 Microsoft Flight Simulator</strong>
+            <span id="simulatorPosition">未检测到飞行数据</span>
+            <span id="simulatorFuel">实际燃油：等待遥测</span>
+            <span id="simulatorMissionState">接受任务后将自动校验真实飞行。</span>
+          </div>
+          <button class="action-btn" id="connectSimulatorBtn" type="button"><i data-lucide="radio"></i><span>连接 MSFS</span></button>
+          <div class="simulator-view-links" aria-label="监测页面">
+            <button class="action-btn" type="button" data-view="monitor"><i data-lucide="activity"></i><span>实时监测</span></button>
+            <button class="action-btn" type="button" data-view="sop"><i data-lucide="clipboard-check"></i><span>SOP 监测</span></button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>快速操作</h2>
+          </div>
+          <div class="stack-actions">
+            <button class="action-btn" id="thankSupportBtn" type="button"><i data-lucide="heart-handshake"></i><span>捐赠</span></button>
+            <button class="action-btn" id="aboutBtn" type="button"><i data-lucide="info"></i><span>软件说明</span></button>
+            <button class="action-btn danger" id="resetBtn" type="button"><i data-lucide="rotate-ccw"></i><span>重置所有数据</span></button>
+          </div>
+        </section>
+      </aside>
+
+      <section class="content-area">
+        <section class="view is-active" id="dashboardView">
+          <div class="hero-panel">
+            <div>
+              <p class="eyebrow">当前目标</p>
+              <h2 id="careerGoal">积累航线经验并晋升机长</h2>
+              <p id="careerGoalText">选择一个航班任务，完成飞行后系统会结算收入、小时数、声望和成就。</p>
+              <div class="hero-actions">
+                <button class="primary-btn" id="heroMissionBtn" type="button"><i data-lucide="route"></i><span>查看任务</span></button>
+                <button class="ghost-btn" id="heroLogBtn" type="button"><i data-lucide="book-open"></i><span>查看飞行日志</span></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="metric-grid">
+            <article class="metric-card"><span>总里程</span><strong id="totalMiles">0 nm</strong><em id="milesTrend">等待首飞</em></article>
+            <article class="metric-card"><span>起降次数</span><strong id="totalLandings">0</strong><em>每次完成任务 +1</em></article>
+            <article class="metric-card"><span>机型经验</span><strong id="topAircraft">暂无</strong><em id="topAircraftHours">0 小时</em></article>
+            <article class="metric-card"><span>已完成任务</span><strong id="completedCount">0</strong><em id="activeMissionCount">0 个待飞</em></article>
+          </div>
+
+          <div class="two-column">
+            <section class="panel">
+              <div class="section-head">
+                <h2>推荐任务</h2>
+                <button class="text-btn" type="button" data-view-shortcut="missions">全部</button>
+              </div>
+              <div class="mission-list compact" id="recommendedMissions"></div>
+            </section>
+            <section class="panel">
+              <div class="section-head">
+                <h2>近期飞行日志</h2>
+                <button class="text-btn" type="button" data-view-shortcut="logs">全部</button>
+              </div>
+              <div class="log-list compact" id="recentLogs"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="missionsView">
+          <div class="section-bar">
+            <div>
+              <h2>航班任务</h2>
+              <p>任务简报、实时 METAR 与燃油计划集中显示。</p>
+            </div>
+            <div class="mission-header-actions">
+              <div class="mission-category-tabs" role="group" aria-label="任务类型">
+                <button class="icon-btn is-active" type="button" data-mission-category="all" aria-label="全部类型" aria-pressed="true" title="全部类型"><i data-lucide="layout-grid"></i></button>
+                <button class="icon-btn" type="button" data-mission-category="客运" aria-label="客运任务" aria-pressed="false" title="客运"><i data-lucide="users"></i></button>
+                <button class="icon-btn" type="button" data-mission-category="货运" aria-label="货运任务" aria-pressed="false" title="货运"><i data-lucide="package"></i></button>
+                <button class="icon-btn" type="button" data-mission-category="包机" aria-label="包机任务" aria-pressed="false" title="包机"><i data-lucide="briefcase-business"></i></button>
+                <button class="icon-btn" type="button" data-mission-category="医疗" aria-label="医疗任务" aria-pressed="false" title="医疗"><i data-lucide="heart-pulse"></i></button>
+                <button class="icon-btn" type="button" data-mission-category="搜救" aria-label="搜救任务" aria-pressed="false" title="搜救"><i data-lucide="scan-search"></i></button>
+                <button class="icon-btn" type="button" data-mission-category="海上救援" aria-label="海上救援任务" aria-pressed="false" title="海上救援"><i data-lucide="life-buoy"></i></button>
+                <button class="icon-btn" type="button" data-mission-category="事故调查" aria-label="事故调查任务" aria-pressed="false" title="事故调查"><i data-lucide="search-check"></i></button>
+              </div>
+              <button class="ghost-btn" id="refreshMissionsBtn" type="button" title="刷新任务"><i data-lucide="refresh-cw"></i><span>刷新任务</span></button>
+            </div>
+          </div>
+          <div class="filter-bar" aria-label="任务筛选">
+            <label class="search-control">
+              <i data-lucide="search"></i>
+              <input id="missionSearch" type="search" placeholder="机场、航班号或航线" aria-label="搜索任务">
+            </label>
+            <select id="missionDistanceSort" aria-label="按距离排序">
+              <option value="near">距离：近到远</option>
+              <option value="far">距离：远到近</option>
+              <option value="newest">最新任务</option>
+            </select>
+            <select id="missionStatusFilter" aria-label="任务状态">
+              <option value="all">全部状态</option>
+              <option value="open">待接单</option>
+              <option value="accepted">已接受</option>
+              <option value="completed">已完成</option>
+            </select>
+            <span class="result-count" id="missionResultCount">0 个任务</span>
+          </div>
+          <div class="mission-list mission-open-list" id="missionsList"></div>
+        </section>
+
+        <section class="view" id="mapView">
+          <div class="section-bar">
+            <div>
+              <h2>任务地图</h2>
+              <p>基地机场、已接任务航线和场景目标。</p>
+            </div>
+            <div class="section-actions map-actions">
+              <div class="map-layer-controls" role="group" aria-label="地图图层">
+                <button type="button" data-map-layer="standard" aria-pressed="true" title="标准地图"><i data-lucide="map"></i><span>标准</span></button>
+                <button type="button" data-map-layer="satellite" aria-pressed="false" title="卫星图"><i data-lucide="satellite"></i><span>卫星</span></button>
+                <button type="button" data-map-layer="dark" aria-pressed="false" title="深色地图"><i data-lucide="moon"></i><span>深色</span></button>
+              </div>
+              <button class="icon-btn map-track-btn" id="followAircraftBtn" type="button" aria-label="自动跟踪飞机" title="自动跟踪飞机" aria-pressed="false"><i data-lucide="locate-fixed"></i></button>
+              <button class="icon-btn map-company-btn" id="toggleCompanyAircraftBtn" type="button" aria-label="隐藏公司飞机" title="隐藏公司飞机" aria-pressed="true"><i data-lucide="building-2"></i></button>
+              <button class="icon-btn" id="refreshMapBtn" type="button" aria-label="刷新地图" title="刷新地图"><i data-lucide="refresh-cw"></i></button>
+            </div>
+          </div>
+          <div class="map-workspace">
+            <div class="career-map" id="careerMap" aria-label="Leaflet 任务地图"></div>
+            <aside class="map-task-sidebar" aria-labelledby="mapPageTitle">
+              <div class="map-task-head">
+                <div>
+                  <h3 id="mapPageTitle">基地机场</h3>
+                  <p id="mapPageSummary"></p>
+                </div>
+                <span class="tag info" id="mapPageCount"></span>
+              </div>
+              <div class="map-task-list" id="mapTaskList"></div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="monitorView">
+          <div class="section-bar">
+            <div>
+              <h2>实时飞行监测</h2>
+              <p>同步显示 MSFS 灯光开关、飞行状态与关键遥测数据。</p>
+            </div>
+          </div>
+          <div class="monitor-connection-band is-offline" id="monitorConnection" role="status" aria-live="polite">
+            <span class="monitor-connection-lamp" aria-hidden="true"></span>
+            <div>
+              <strong id="monitorConnectionTitle">等待 MSFS 连接</strong>
+              <small id="monitorConnectionDetail">遥测服务正在自动检测模拟器</small>
+            </div>
+            <time id="monitorUpdatedAt">尚无数据</time>
+          </div>
+          <div class="monitor-layout">
+            <section class="monitor-section monitor-light-section" aria-labelledby="monitorLightsTitle">
+              <div class="monitor-section-head">
+                <div>
+                  <h3 id="monitorLightsTitle"><i data-lucide="activity"></i>灯光与设备状态</h3>
+                  <p>开关与位置随驾驶舱状态实时同步，仅用于监测。</p>
+                </div>
+              </div>
+              <div class="monitor-light-list">
+                <div class="monitor-light-row">
+                  <div><strong>航行灯</strong><span>NAV</span></div>
+                  <label class="monitor-switch" title="航行灯实时状态"><input type="checkbox" role="switch" data-monitor-light="navigationLights" disabled><span class="monitor-switch-track"><span></span></span></label>
+                  <span class="monitor-light-state is-unknown" data-monitor-light-state="navigationLights"><i></i><b>无数据</b></span>
+                </div>
+                <div class="monitor-light-row">
+                  <div><strong>防撞灯</strong><span>BEACON</span></div>
+                  <label class="monitor-switch" title="防撞灯实时状态"><input type="checkbox" role="switch" data-monitor-light="antiCollisionLights" disabled><span class="monitor-switch-track"><span></span></span></label>
+                  <span class="monitor-light-state is-unknown" data-monitor-light-state="antiCollisionLights"><i></i><b>无数据</b></span>
+                </div>
+                <div class="monitor-light-row">
+                  <div><strong>滑行灯</strong><span>TAXI</span></div>
+                  <label class="monitor-switch" title="滑行灯实时状态"><input type="checkbox" role="switch" data-monitor-light="taxiLights" disabled><span class="monitor-switch-track"><span></span></span></label>
+                  <span class="monitor-light-state is-unknown" data-monitor-light-state="taxiLights"><i></i><b>无数据</b></span>
+                </div>
+                <div class="monitor-light-row">
+                  <div><strong>着陆灯</strong><span>LANDING</span></div>
+                  <label class="monitor-switch" title="着陆灯实时状态"><input type="checkbox" role="switch" data-monitor-light="landingLights" disabled><span class="monitor-switch-track"><span></span></span></label>
+                  <span class="monitor-light-state is-unknown" data-monitor-light-state="landingLights"><i></i><b>无数据</b></span>
+                </div>
+                <div class="monitor-light-row">
+                  <div><strong>频闪灯</strong><span>STROBE</span></div>
+                  <label class="monitor-switch" title="频闪灯实时状态"><input type="checkbox" role="switch" data-monitor-light="strobeLights" disabled><span class="monitor-switch-track"><span></span></span></label>
+                  <span class="monitor-light-state is-unknown" data-monitor-light-state="strobeLights"><i></i><b>无数据</b></span>
+                </div>
+                <div class="monitor-light-row">
+                  <div><strong>停留刹车</strong><span>PARK BRAKE</span></div>
+                  <label class="monitor-switch" title="停留刹车实时状态"><input type="checkbox" role="switch" data-monitor-light="parkingBrake" disabled><span class="monitor-switch-track"><span></span></span></label>
+                  <span class="monitor-light-state is-unknown" data-monitor-light-state="parkingBrake"><i></i><b>无数据</b></span>
+                </div>
+                <div class="monitor-light-row">
+                  <div><strong>襟翼</strong><span>FLAPS</span></div>
+                  <label class="monitor-switch" title="襟翼实时位置"><input type="checkbox" role="switch" data-monitor-light="flapsPercent" disabled><span class="monitor-switch-track"><span></span></span></label>
+                  <span class="monitor-light-state is-unknown" data-monitor-light-state="flapsPercent"><i></i><b>无数据</b></span>
+                </div>
+                <div class="monitor-light-row">
+                  <div><strong>扰流板</strong><span>SPOILERS</span></div>
+                  <label class="monitor-switch" title="扰流板实时位置"><input type="checkbox" role="switch" data-monitor-light="spoilersPercent" disabled><span class="monitor-switch-track"><span></span></span></label>
+                  <span class="monitor-light-state is-unknown" data-monitor-light-state="spoilersPercent"><i></i><b>无数据</b></span>
+                </div>
+                <div class="monitor-light-row">
+                  <div><strong>起落架</strong><span>GEAR</span></div>
+                  <label class="monitor-switch" title="起落架实时位置"><input type="checkbox" role="switch" data-monitor-light="gearPercent" disabled><span class="monitor-switch-track"><span></span></span></label>
+                  <span class="monitor-light-state is-unknown" data-monitor-light-state="gearPercent"><i></i><b>无数据</b></span>
+                </div>
+              </div>
+            </section>
+            <section class="monitor-section monitor-data-section" aria-labelledby="monitorDataTitle">
+              <div class="monitor-section-head">
+                <div>
+                  <h3 id="monitorDataTitle"><i data-lucide="gauge"></i>飞行数据</h3>
+                  <p data-monitor-field="aircraftTitle">等待飞机数据</p>
+                </div>
+                <span class="monitor-phase-tag" data-monitor-field="flightPhase">未连接</span>
+              </div>
+              <div class="monitor-data-grid">
+                <div><span>呼号</span><strong data-monitor-field="callsign">--</strong></div>
+                <div><span>发动机</span><strong data-monitor-field="engineRunning">--</strong></div>
+                <div><span>指示空速</span><strong data-monitor-field="indicatedAirspeedKt">-- kt</strong></div>
+                <div><span>真实空速</span><strong data-monitor-field="trueAirspeedKt">-- kt</strong></div>
+                <div><span>地速</span><strong data-monitor-field="groundSpeedKt">-- kt</strong></div>
+                <div><span>垂直速度</span><strong data-monitor-field="verticalSpeedFpm">-- fpm</strong></div>
+                <div><span>气压高度</span><strong data-monitor-field="altitudeFt">-- ft</strong></div>
+                <div><span>无线电高度</span><strong data-monitor-field="radioAltitudeFt">-- ft</strong></div>
+                <div><span>磁航向</span><strong data-monitor-field="magneticHeadingDeg">--°</strong></div>
+                <div><span>俯仰 / 横滚</span><strong data-monitor-field="attitude">--° / --°</strong></div>
+                <div><span>载荷</span><strong data-monitor-field="gForce">-- G</strong></div>
+                <div><span>燃油</span><strong data-monitor-field="fuel">--</strong></div>
+                <div><span>停留刹车</span><strong data-monitor-field="parkingBrake">--</strong></div>
+                <div><span>模拟倍率</span><strong data-monitor-field="simulationRate">--</strong></div>
+                <div class="monitor-data-wide"><span>位置</span><strong data-monitor-field="position">--</strong></div>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="sopView">
+          <div class="section-bar">
+            <div>
+              <h2>SOP 飞行监测</h2>
+              <p>按任务阶段实时核对操作、遥测条件与扣分项目。</p>
+            </div>
+            <span class="sop-page-mode" id="sopModeStatus">未开启</span>
+          </div>
+
+          <section class="sop-command-band is-disabled" id="sopMonitor" aria-labelledby="sopMonitorTitle" aria-live="polite">
+            <div class="sop-command-copy">
+              <span class="sop-live-lamp" aria-hidden="true"></span>
+              <div>
+                <p>当前考核任务</p>
+                <h3 id="sopMonitorTitle"><span id="sopMissionName">尚未接受任务</span></h3>
+                <span id="sopMonitorSummary">在设置中开启 SOP 模式后开始监测。</span>
+              </div>
+            </div>
+            <div class="sop-score-block">
+              <span>实时得分</span>
+              <strong id="sopMonitorScore">未开启</strong>
+              <small>满分 100</small>
+            </div>
+          </section>
+
+          <div class="sop-summary-grid" aria-label="SOP 实时摘要">
+            <div><span>当前阶段</span><strong id="sopCurrentStage">等待开始</strong><small>按飞行进程自动推进</small></div>
+            <div><span>完成进度</span><strong id="sopCompletedCount">0 / 7</strong><small>灯光至关车共七项</small></div>
+            <div><span>累计扣分</span><strong id="sopDeductionTotal">0 分</strong><small>同一违规项目只扣一次</small></div>
+            <div><span>遥测状态</span><strong id="sopTelemetryStatus">等待 MSFS</strong><small>数据随模拟器实时更新</small></div>
+          </div>
+
+          <div class="sop-stage-track" id="sopStageTrack" aria-label="SOP 阶段进度"></div>
+
+          <section class="sop-detail-section" aria-labelledby="sopDetailTitle">
+            <div class="subsection-head">
+              <div>
+                <h3 id="sopDetailTitle">逐项监测明细</h3>
+                <p>状态、触发条件、实时数据和扣分规则集中显示。</p>
+              </div>
+              <span>实时更新</span>
+            </div>
+            <div class="sop-detail-table-wrap" id="sopMonitorTable"></div>
+          </section>
+
+          <div class="sop-bottom-grid">
+            <section class="sop-deduction-panel" aria-labelledby="sopDeductionTitle">
+              <div class="subsection-head">
+                <div>
+                  <h3 id="sopDeductionTitle">本次任务扣分记录</h3>
+                  <p>记录扣分时间、原因、分值及纠正要求。</p>
+                </div>
+              </div>
+              <div class="sop-deduction-list" id="sopDeductionList"></div>
+            </section>
+            <section class="sop-reference-panel" aria-labelledby="sopReferenceTitle">
+              <div class="subsection-head">
+                <div>
+                  <h3 id="sopReferenceTitle">评分构成</h3>
+                  <p>阶段权重用于任务报告，违规项按规则从 100 分中扣除。</p>
+                </div>
+              </div>
+              <dl class="sop-score-reference">
+                <div><dt>灯光</dt><dd>15</dd></div>
+                <div><dt>滑行</dt><dd>10</dd></div>
+                <div><dt>起飞</dt><dd>15</dd></div>
+                <div><dt>巡航</dt><dd>15</dd></div>
+                <div><dt>着陆</dt><dd>25</dd></div>
+                <div><dt>停机</dt><dd>10</dd></div>
+                <div><dt>关车</dt><dd>10</dd></div>
+              </dl>
+              <p class="sop-reference-note"><i data-lucide="info"></i>自由模式会暂停 SOP 判定；缺失的遥测项目会标记为不可用，不会伪造通过状态。</p>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="schedulesView">
+          <div class="section-bar">
+            <div>
+              <h2>计划表</h2>
+              <p>创建指定起飞和降落机场的航线任务。</p>
+            </div>
+          </div>
+          <div class="plan-route-builder" aria-label="创建计划任务">
+            <label class="field plan-airport-field">
+              <span>起飞机场</span>
+              <input id="planOriginInput" type="text" inputmode="text" minlength="4" maxlength="4" pattern="[A-Za-z]{4}" autocomplete="off" spellcheck="false" placeholder="四字 ICAO" aria-label="起飞机场四字码">
+              <output id="planOriginResult" class="plan-airport-result"></output>
+            </label>
+            <i data-lucide="arrow-right" class="plan-route-arrow" aria-hidden="true"></i>
+            <label class="field plan-airport-field">
+              <span>降落机场</span>
+              <input id="planDestinationInput" type="text" inputmode="text" minlength="4" maxlength="4" pattern="[A-Za-z]{4}" autocomplete="off" spellcheck="false" placeholder="四字 ICAO" aria-label="降落机场四字码">
+              <output id="planDestinationResult" class="plan-airport-result"></output>
+            </label>
+            <label class="field plan-aircraft-field">
+              <span>机型（购买 / 租赁）</span>
+              <select id="planAircraftSelect" aria-label="选择已购买或租赁的机型"></select>
+              <small id="planAircraftHint" class="plan-aircraft-hint"></small>
+            </label>
+            <button class="primary-btn" id="generatePlannedMissionBtn" type="button" disabled><i data-lucide="route"></i><span>生成任务</span></button>
+          </div>
+          <div class="schedule-summary" id="scheduleSummary"></div>
+          <div class="subsection-head">
+            <h3>计划记录</h3>
+          </div>
+          <div class="schedule-list" id="scheduleList"></div>
+        </section>
+
+        <section class="view" id="logsView">
+          <div class="section-bar">
+            <div>
+              <h2>飞行日志</h2>
+              <p>任务完成后自动记录航段、机型、里程和结算。</p>
+            </div>
+          </div>
+          <div class="log-list" id="logsList"></div>
+        </section>
+
+        <section class="view" id="achievementsView">
+          <div class="section-bar">
+            <div>
+              <h2>成就</h2>
+              <p>完成飞行、扩展机队并推进职业等级。</p>
+            </div>
+          </div>
+          <div class="achievement-list" id="achievementList"></div>
+        </section>
+
+        <section class="view" id="profileView">
+          <div class="section-bar">
+            <div>
+              <h2>个人信息</h2>
+              <p>飞行员档案、基地机场与职业路线。</p>
+            </div>
+          </div>
+          <div class="profile-page-grid">
+            <div class="profile-page-main">
+              <section class="panel profile-overview" id="profileOverview"></section>
+              <div class="subsection-head">
+                <h3>资金使用明细</h3>
+                <span>保留最近 200 条</span>
+              </div>
+              <section class="panel fund-ledger" aria-label="资金使用明细">
+                <div class="fund-summary" id="fundSummary"></div>
+                <div class="fund-transaction-list" id="fundTransactionList"></div>
+              </section>
+              <div class="subsection-head">
+                <h3>职业路线</h3>
+                <span>按累计飞行小时解锁</span>
+              </div>
+              <div class="rank-timeline" id="profileRankTimeline"></div>
+            </div>
+            <aside class="profile-license-panel panel">
+              <div class="subsection-head">
+                <div>
+                  <h3>机型考核执照</h3>
+                  <p>完成考核后可正式执飞对应机型</p>
+                </div>
+                <div class="license-panel-actions">
+                  <span id="licenseProgress">0 / 0</span>
+                  <button class="icon-btn" id="refreshLicenseAssessmentsBtn" type="button" aria-label="刷新考核任务" title="刷新考核任务"><i data-lucide="refresh-cw"></i></button>
+                </div>
+              </div>
+              <div class="aircraft-license-list" id="aircraftLicenseList"></div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="hangarView">
+          <div class="section-bar">
+            <div>
+              <h2>飞机市场</h2>
+              <p>所有机型均可重复购买或租赁，交易后的飞机在“飞机管理”中维护。</p>
+            </div>
+            <div class="section-actions">
+              <label class="search-control compact-search">
+                <i data-lucide="search"></i>
+                <input id="hangarSearch" type="search" placeholder="搜索机型" aria-label="搜索机型">
+              </label>
+              <label class="inline-filter">
+                <span>制造商分类</span>
+                <select id="hangarFilter">
+                  <option value="all">全部</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <div class="hangar-grid" id="hangarGrid"></div>
+        </section>
+
+        <section class="view" id="aircraftManagementView">
+          <div class="section-bar">
+            <div>
+              <h2>飞机管理</h2>
+              <p>查看机队运营记录、任务默认机型与 MSFS 实际燃油。</p>
+            </div>
+            <div class="section-actions">
+              <label class="search-control compact-search">
+                <i data-lucide="search"></i>
+                <input id="aircraftManagementSearch" type="search" placeholder="搜索机型或编号" aria-label="搜索飞机">
+              </label>
+              <label class="inline-filter">
+                <span>制造商分类</span>
+                <select id="aircraftManagementFilter">
+                  <option value="all">全部</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <div class="hangar-summary" id="aircraftManagementSummary"></div>
+          <div class="aircraft-management-grid" id="aircraftManagementGrid"></div>
+        </section>
+
+        <section class="view" id="companyView">
+          <div class="section-bar company-titlebar">
+            <div>
+              <h2>航空公司</h2>
+              <p>管理公司、任务、飞行员、机队和运营资金。</p>
+            </div>
+            <div class="company-identity" id="companyIdentity"></div>
+          </div>
+          <nav class="company-tabs" aria-label="航空公司管理模块">
+            <button class="company-tab is-active" type="button" data-company-section="management"><i data-lucide="building"></i><span>公司管理</span></button>
+            <button class="company-tab" type="button" data-company-section="tasks"><i data-lucide="clipboard-list"></i><span>公司任务</span></button>
+            <button class="company-tab" type="button" data-company-section="pilots"><i data-lucide="users"></i><span>飞行员管理</span></button>
+            <button class="company-tab" type="button" data-company-section="recruitment"><i data-lucide="user-plus"></i><span>飞行员招聘</span></button>
+            <button class="company-tab" type="button" data-company-section="hangar"><i data-lucide="warehouse"></i><span>机库管理</span></button>
+            <button class="company-tab" type="button" data-company-section="finance"><i data-lucide="chart-no-axes-combined"></i><span>公司资金统计</span></button>
+            <button class="company-tab" type="button" data-company-section="flight-log"><i data-lucide="notebook-tabs"></i><span>航班日志</span></button>
+          </nav>
+
+          <section class="company-section is-active" data-company-panel="management">
+            <div id="companyManagementPanel"></div>
+          </section>
+          <section class="company-section" data-company-panel="tasks">
+            <div class="subsection-head">
+              <h3>公司任务池</h3>
+              <button class="ghost-btn" id="refreshCompanyTasksBtn" type="button"><i data-lucide="refresh-cw"></i><span>刷新任务</span></button>
+            </div>
+            <div class="company-list" id="companyTaskList"></div>
+          </section>
+          <section class="company-section" data-company-panel="pilots">
+            <div class="company-summary" id="companyPilotSummary"></div>
+            <div class="company-list" id="companyPilotList"></div>
+          </section>
+          <section class="company-section" data-company-panel="recruitment">
+            <div class="subsection-head">
+              <h3>候选飞行员</h3>
+              <button class="ghost-btn" id="refreshApplicantsBtn" type="button"><i data-lucide="refresh-cw"></i><span>刷新候选人</span></button>
+            </div>
+            <div class="company-list" id="companyApplicantList"></div>
+          </section>
+          <section class="company-section" data-company-panel="hangar">
+            <div class="section-actions company-fleet-filters">
+              <label class="search-control compact-search">
+                <i data-lucide="search"></i>
+                <input id="companyHangarSearch" type="search" placeholder="搜索公司飞机或编号" aria-label="搜索公司飞机">
+              </label>
+              <label class="inline-filter">
+                <span>制造商分类</span>
+                <select id="companyHangarFilter">
+                  <option value="all">全部</option>
+                </select>
+              </label>
+            </div>
+            <div class="company-summary" id="companyHangarSummary"></div>
+            <div class="company-fleet-grid" id="companyHangarGrid"></div>
+          </section>
+          <section class="company-section" data-company-panel="finance">
+            <div class="company-summary" id="companyFinanceSummary"></div>
+            <section class="panel company-ledger" aria-label="公司资金流水">
+              <div class="fund-transaction-list" id="companyTransactionList"></div>
+            </section>
+          </section>
+          <section class="company-section" data-company-panel="flight-log">
+            <div class="subsection-head">
+              <div>
+                <h3>公司航班日志</h3>
+                <p class="company-muted">独立记录公司派遣任务、实际起降机场和落地安全数据。</p>
+              </div>
+            </div>
+            <div class="company-list" id="companyFlightLogList"></div>
+          </section>
+        </section>
+
+      </section>
+
+      <aside class="sidebar right-sidebar">
+        <section class="panel">
+          <div class="section-head">
+            <h2>任务日志</h2>
+            <button class="text-btn" type="button" data-view-shortcut="logs">全部</button>
+          </div>
+          <div class="log-list compact" id="sidebarLogs"></div>
+        </section>
+        <section class="panel dashboard-settlement-panel">
+          <div class="dashboard-settlement" id="dashboardSettlement" aria-live="polite">
+            <div class="settlement-empty">
+              <i data-lucide="clipboard-list" aria-hidden="true"></i>
+              <strong>暂无已完成任务</strong>
+              <span>完成任务后，这里会显示最近一次飞行结算。</span>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <dialog class="modal" id="logModal" hidden>
+    <form method="dialog" class="modal-card" id="logForm">
+      <div class="modal-head">
+        <h2 id="logModalTitle">记录航段</h2>
+        <button class="icon-btn" value="cancel" aria-label="关闭" type="submit"><i data-lucide="x"></i></button>
+      </div>
+      <div class="form-grid">
+        <label class="field"><span>出发</span><input id="logFrom" type="text" required maxlength="8"></label>
+        <label class="field"><span>到达</span><input id="logTo" type="text" required maxlength="8"></label>
+      </div>
+      <div class="form-grid">
+        <label class="field"><span>机型</span><input id="logAircraft" type="text" required maxlength="24"></label>
+        <label class="field"><span>小时</span><input id="logHours" type="number" min="0.1" step="0.1" required></label>
+      </div>
+      <div class="form-grid">
+        <label class="field"><span>里程 nm</span><input id="logMiles" type="number" min="1" step="1" required></label>
+        <label class="field"><span>收入 $</span><input id="logIncome" type="number" step="100" required></label>
+      </div>
+      <label class="field"><span>备注</span><textarea id="logNotes" rows="3"></textarea></label>
+      <div class="modal-actions">
+        <button class="ghost-btn" value="cancel" type="submit">取消</button>
+        <button class="primary-btn" value="default" type="submit">确认记录</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal compact-confirm-modal" id="confirmModal">
+    <form method="dialog" class="modal-card" id="confirmForm">
+      <p class="confirm-message" id="confirmMessage"></p>
+      <div class="modal-actions">
+        <button class="ghost-btn" value="cancel" type="submit">取消</button>
+        <button class="primary-btn" value="confirm" type="submit">确定</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal settings-modal" id="settingsModal">
+    <form method="dialog" class="modal-card settings-card" id="settingsForm">
+      <div class="modal-head">
+        <div>
+          <h2>设置</h2>
+          <p>调整应用偏好和任务规则</p>
+        </div>
+        <button class="icon-btn" value="cancel" aria-label="关闭" type="submit"><i data-lucide="x"></i></button>
+      </div>
+      <div class="settings-row">
+        <div>
+          <label for="speechVolumeRange">语音播报音量</label>
+          <p>仅影响任务状态和提示语音</p>
+        </div>
+        <output id="speechVolumeValue" for="speechVolumeRange">100%</output>
+      </div>
+      <input id="speechVolumeRange" class="volume-range" type="range" min="0" max="100" step="5" value="100" aria-label="语音播报音量">
+      <div class="settings-row settings-free-mode-row">
+        <div>
+          <label for="freeModeToggle">自由模式</label>
+          <p>临时资金 100 万，飞机市场不限小时；关闭后恢复原资金</p>
+        </div>
+        <label class="app-switch" title="切换自由模式">
+          <input id="freeModeToggle" class="app-switch-input" type="checkbox" role="switch" aria-label="自由模式">
+          <span class="app-switch-track" aria-hidden="true">
+            <span class="app-switch-label app-switch-off">OFF</span>
+            <span class="app-switch-label app-switch-on">ON</span>
+            <span class="app-switch-knob"></span>
+          </span>
+        </label>
+      </div>
+      <div class="settings-row settings-free-mode-row">
+        <div>
+          <label for="sopModeToggle">SOP 模式</label>
+          <p>严格检查灯光、滑行、起飞、巡航、着陆、停机和关车，按 100 分制结算</p>
+        </div>
+        <label class="app-switch" title="切换 SOP 模式">
+          <input id="sopModeToggle" class="app-switch-input" type="checkbox" role="switch" aria-label="SOP 模式">
+          <span class="app-switch-track" aria-hidden="true">
+            <span class="app-switch-label app-switch-off">OFF</span>
+            <span class="app-switch-label app-switch-on">ON</span>
+            <span class="app-switch-knob"></span>
+          </span>
+        </label>
+      </div>
+      <section class="settings-runtime-section" aria-labelledby="runtimeLogTitle">
+        <div class="subsection-head">
+          <div>
+            <h3 id="runtimeLogTitle">运行日志</h3>
+            <span id="runtimeLogStatus">正在读取</span>
+          </div>
+          <div class="settings-log-actions">
+            <button class="icon-btn" id="refreshRuntimeLogBtn" type="button" aria-label="刷新运行日志" title="刷新运行日志"><i data-lucide="refresh-cw"></i></button>
+            <button class="icon-btn danger-btn" id="clearRuntimeLogBtn" type="button" aria-label="清空运行日志" title="清空运行日志"><i data-lucide="trash-2"></i></button>
+          </div>
+        </div>
+        <div class="runtime-log-list" id="runtimeLogList" role="log" aria-live="polite"></div>
+        <button class="ghost-btn runtime-log-export" id="exportRuntimeLogBtn" type="button"><i data-lucide="download"></i><span>导出日志</span></button>
+      </section>
+      <section class="settings-backup-section" aria-labelledby="settingsBackupTitle">
+        <div class="subsection-head">
+          <div>
+            <h3 id="settingsBackupTitle">可恢复备份</h3>
+            <span>最多保留 8 个</span>
+          </div>
+          <button class="ghost-btn" id="createBackupBtn" type="button"><i data-lucide="archive"></i><span>创建备份</span></button>
+        </div>
+        <div class="backup-list" id="backupList"></div>
+      </section>
+      <div class="modal-actions">
+        <button class="ghost-btn" value="cancel" type="submit">取消</button>
+        <button class="primary-btn" value="confirm" type="submit"><i data-lucide="check"></i><span>保存设置</span></button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

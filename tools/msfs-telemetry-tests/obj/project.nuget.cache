@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "wQ1ZYxyO5gc=",
+  "success": true,
+  "projectFilePath": "D:\\AI工程文件\\文件修改\\flight-career-manager\\tools\\msfs-telemetry-tests\\SkylineVA.Msfs2024Telemetry.Tests.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\LAOXIAO\\.nuget\\packages\\simconnect.net\\0.2.2\\simconnect.net.0.2.2.nupkg.sha512"
+  ],
+  "logs": []
+}

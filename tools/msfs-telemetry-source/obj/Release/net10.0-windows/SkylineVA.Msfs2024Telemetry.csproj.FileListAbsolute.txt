@@ -1,0 +1,17 @@
+D:\AI工程文件\文件修改\flight-career-manager\tools\msfs-telemetry-source\bin\Release\net10.0-windows\data\airport-catalog.json
+D:\AI工程文件\文件修改\flight-career-manager\tools\msfs-telemetry-source\bin\Release\net10.0-windows\SkylineVA.Msfs2024Telemetry.exe
+D:\AI工程文件\文件修改\flight-career-manager\tools\msfs-telemetry-source\bin\Release\net10.0-windows\SkylineVA.Msfs2024Telemetry.deps.json
+D:\AI工程文件\文件修改\flight-career-manager\tools\msfs-telemetry-source\bin\Release\net10.0-windows\SkylineVA.Msfs2024Telemetry.runtimeconfig.json
+D:\AI工程文件\文件修改\flight-career-manager\tools\msfs-telemetry-source\bin\Release\net10.0-windows\SkylineVA.Msfs2024Telemetry.dll
+D:\AI工程文件\文件修改\flight-career-manager\tools\msfs-telemetry-source\bin\Release\net10.0-windows\SimConnect.NET.dll
+D:\AI工程文件\文件修改\flight-career-manager\tools\msfs-telemetry-source\bin\Release\net10.0-windows\runtimes\win-x64\native\SimConnect.dll
+D:\AI工程文件\文件修改\flight-career-manager\tools\msfs-telemetry-source\obj\Release\net10.0-windows\SkylineVA.Msfs2024Telemetry.csproj.AssemblyReference.cache
+D:\AI工程文件\文件修改\flight-career-manager\tools\msfs-telemetry-source\obj\Release\net10.0-windows\SkylineVA.Msfs2024Telemetry.GeneratedMSBuildEditorConfig.editorconfig
+D:\AI工程文件\文件修改\flight-career-manager\tools\msfs-telemetry-source\obj\Release\net10.0-windows\SkylineVA.Msfs2024Telemetry.AssemblyInfoInputs.cache
+D:\AI工程文件\文件修改\flight-career-manager\tools\msfs-telemetry-source\obj\Release\net10.0-windows\SkylineVA.Msfs2024Telemetry.AssemblyInfo.cs
+D:\AI工程文件\文件修改\flight-career-manager\tools\msfs-telemetry-source\obj\Release\net10.0-windows\SkylineVA.Msfs2024Telemetry.csproj.CoreCompileInputs.cache
+D:\AI工程文件\文件修改\flight-career-manager\tools\msfs-telemetry-source\obj\Release\net10.0-windows\SkylineV.15738316.Up2Date
+D:\AI工程文件\文件修改\flight-career-manager\tools\msfs-telemetry-source\obj\Release\net10.0-windows\SkylineVA.Msfs2024Telemetry.dll
+D:\AI工程文件\文件修改\flight-career-manager\tools\msfs-telemetry-source\obj\Release\net10.0-windows\refint\SkylineVA.Msfs2024Telemetry.dll
+D:\AI工程文件\文件修改\flight-career-manager\tools\msfs-telemetry-source\obj\Release\net10.0-windows\SkylineVA.Msfs2024Telemetry.genruntimeconfig.cache
+D:\AI工程文件\文件修改\flight-career-manager\tools\msfs-telemetry-source\obj\Release\net10.0-windows\ref\SkylineVA.Msfs2024Telemetry.dll

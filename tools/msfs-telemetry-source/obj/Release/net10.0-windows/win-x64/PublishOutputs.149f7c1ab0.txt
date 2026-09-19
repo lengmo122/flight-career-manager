@@ -1,0 +1,2 @@
+D:\AI工程文件\文件修改\flight-career-manager\.telemetry-publish\data\airport-catalog.json
+D:\AI工程文件\文件修改\flight-career-manager\.telemetry-publish\SkylineVA.Msfs2024Telemetry.exe

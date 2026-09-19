@@ -184,7 +184,7 @@ function renderMissionListItem(mission) {
       <section class="mission-briefing-block mission-weather-block">
         <h4><i data-lucide="cloud-sun"></i>METAR</h4>
         ${missionMetarLine(originCode, "起飞", mission.weather)}
-        ${escapeHtml(missionMetarLine(mission.destination || codes[1], "到达", mission.weather))}
+        ${missionMetarLine(mission.destination || codes[1], "到达", mission.weather)}
       </section>
       <section class="mission-briefing-block mission-fuel-block">
         <h4><i data-lucide="fuel"></i>燃油计划</h4>

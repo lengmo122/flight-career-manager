@@ -5,7 +5,8 @@ import { rendererSourceFiles } from "../tests/helpers/app-source.mjs";
 
 const FIX = process.argv.includes("--fix");
 const STRING_FIELD = /\.(name|title|notes|label|detail|description|city|country|icao|code|callsign|manufacturer|model|from|to|airline|base|runway|airport|remark|text|message|site|category|subtype|summary|route|origin|destination|id|src|avatar|status|reason)\b/;
-const UNSAFE_TO_WRAP = /`|<|render|\.map\(|join\(|emptyCard|escapeHtml/;
+// 已含转义的 HTML 片段生成函数（render*、missionMetarLine 等）不可再包 escapeHtml。
+const UNSAFE_TO_WRAP = /`|<|render|\.map\(|join\(|emptyCard|escapeHtml|missionMetarLine|Html\(|airlineLogo|metarObservationMeta/;
 const REGEX_PRECEDING = new Set(["=", "(", ",", ":", "[", "!", "&", "|", "?", "{", "}", ";", "+", "-", "*", "%", "<", ">", "~", "^"]);
 
 function scanSource(src) {

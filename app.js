@@ -2886,9 +2886,9 @@ function renderAvatarChoices() {
   const choices = customAvatar ? [...AVATAR_PRESETS, customAvatar] : AVATAR_PRESETS;
   const selectedId = getAvatarPreset(state.pilot.avatarPreset)?.id || (customAvatar ? "custom" : "");
   els.avatarChoiceGrid.innerHTML = choices.map((avatar) => `
-    <button class="avatar-choice${selectedId === avatar.id ? " is-selected" : ""}" type="button" data-avatar-choice="${avatar.id}" aria-label="选择${avatar.label}" title="${avatar.label}">
-      <img src="${avatar.src}" alt="${avatar.label}">
-      <span class="avatar-choice-label">${avatar.label}</span>
+    <button class="avatar-choice${escapeHtml(selectedId === avatar.id ? " is-selected" : "")}" type="button" data-avatar-choice="${escapeHtml(avatar.id)}" aria-label="选择${escapeHtml(avatar.label)}" title="${escapeHtml(avatar.label)}">
+      <img src="${escapeHtml(avatar.src)}" alt="${escapeHtml(avatar.label)}">
+      <span class="avatar-choice-label">${escapeHtml(avatar.label)}</span>
     </button>`).join("");
   if (els.avatarChoiceStatus) {
     els.avatarChoiceStatus.textContent = selectedId === "custom"
@@ -3427,13 +3427,13 @@ function renderAirline() {
           ${airlineLogo(airline)}
           <div>
           <h3>${escapeHtml(company?.name || airline.name)}</h3>
-            <p>${escapeHtml(airline.name)} · ${airline.code} · ${company ? `基地 ${escapeHtml(company.base)}${base?.name ? ` · ${escapeHtml(base.name)}` : ""}` : escapeHtml(airline.type)}</p>
+            <p>${escapeHtml(airline.name)} · ${escapeHtml(airline.code)} · ${company ? `基地 ${escapeHtml(company.base)}${base?.name ? ` · ${escapeHtml(base.name)}` : ""}` : escapeHtml(airline.type)}</p>
           </div>
         </div>
         <span class="tag ${airline.color}">${company ? "运营中" : "当前就职"}</span>
       </div>
       <div class="tag-row">
-        ${company ? `<span class="tag good">公司资金 ${formatMoney(company.funds)}</span><span class="tag">${company.pilots.filter((pilot) => pilot.status !== "fired").length} 名飞行员</span><span class="tag">${companyManagedFleet().length} 架飞机</span>` : `<span class="tag">声望要求 ${airline.rep}</span><span class="tag">建议 ${airline.region}</span><span class="tag info">与任务独立</span>`}
+        ${company ? `<span class="tag good">公司资金 ${formatMoney(company.funds)}</span><span class="tag">${escapeHtml(company.pilots.filter((pilot) => pilot.status !== "fired").length)} 名飞行员</span><span class="tag">${companyManagedFleet().length} 架飞机</span>` : `<span class="tag">声望要求 ${airline.rep}</span><span class="tag">建议 ${airline.region}</span><span class="tag info">与任务独立</span>`}
       </div>
     </div>`;
 }
@@ -3706,7 +3706,7 @@ function renderMapPage() {
     <div class="map-task-item">
       <b>${route.isBase ? "基地" : route.isScene ? "现场" : "航线"}</b>
       <span>${escapeHtml(route.label)}</span>
-      ${route.isBase ? "" : `<small>${route.mission.category} · ${formatTaskDistanceNm(route.mission.distance)}</small>`}
+      ${route.isBase ? "" : `<small>${escapeHtml(route.mission.category)} · ${formatTaskDistanceNm(route.mission.distance)}</small>`}
     </div>
   `).join("") || `<p class="empty-note">当前基地没有匹配坐标，无法定位地图。</p>`;
   if (state.activeView !== "map") return;
@@ -3864,7 +3864,7 @@ function updateLiveAircraftOnMap(sample, connected = true) {
   wireIcons();
   const speed = aircraftDisplaySpeed(sample);
   const altitude = Math.round(Number(sample?.altitudeFt) || 0);
-  liveAircraftMarker.bindTooltip(`${connected ? "MSFS 实时位置" : "MSFS 最后位置"}<br>${speed.label} ${Math.round(speed.value)} kt · ${altitude} ft · 航向 ${String(Math.round(heading)).padStart(3, "0")}°`, {
+  liveAircraftMarker.bindTooltip(`${connected ? "MSFS 实时位置" : "MSFS 最后位置"}<br>${escapeHtml(speed.label)} ${Math.round(speed.value)} kt · ${altitude} ft · 航向 ${String(Math.round(heading)).padStart(3, "0")}°`, {
     direction: "top",
     offset: [0, -14]
   });
@@ -4091,8 +4091,8 @@ function renderSchedules() {
   els.scheduleSummary.innerHTML = `
     <div class="metric-grid schedule-metrics">
       <article class="metric-card"><span>计划航线</span><strong>${plannedRecords.length}</strong><em>已创建的指定航线</em></article>
-      <article class="metric-card"><span>待执行</span><strong>${plannedMissions.filter((mission) => mission.status === "open").length}</strong><em>可在任务页接受</em></article>
-      <article class="metric-card"><span>执行中</span><strong>${plannedMissions.filter((mission) => mission.status === "accepted").length}</strong><em>当前计划任务</em></article>
+      <article class="metric-card"><span>待执行</span><strong>${escapeHtml(plannedMissions.filter((mission) => mission.status === "open").length)}</strong><em>可在任务页接受</em></article>
+      <article class="metric-card"><span>执行中</span><strong>${escapeHtml(plannedMissions.filter((mission) => mission.status === "accepted").length)}</strong><em>当前计划任务</em></article>
       <article class="metric-card"><span>计划里程</span><strong>${Math.round(totalDistance).toLocaleString("zh-CN")}</strong><em>累计海里</em></article>
     </div>`;
   els.scheduleList.innerHTML = state.schedules.map(renderScheduleBatch).join("") || `
@@ -4114,7 +4114,7 @@ function renderBackups() {
         <strong>${escapeHtml(backup.reason || "手动备份")}</strong>
         <span>${new Date(backup.createdAt).toLocaleString("zh-CN")}</span>
       </div>
-      <button class="ghost-btn" data-action="restore-backup" data-id="${backup.id}" type="button"><i data-lucide="history"></i><span>恢复</span></button>
+      <button class="ghost-btn" data-action="restore-backup" data-id="${escapeHtml(backup.id)}" type="button"><i data-lucide="history"></i><span>恢复</span></button>
     </article>`).join("") || `<p class="empty-note">暂无备份。导入存档前会自动创建。</p>`;
 }
 
@@ -4137,7 +4137,7 @@ function renderScheduleBatch(batch) {
   }
   const errors = Array.isArray(batch?.errors) ? batch.errors : [];
   const errorHtml = errors.length
-    ? `<div class="schedule-errors">${errors.slice(0, 5).map((error) => `<p>第 ${error.line} 行：${error.reason}</p>`).join("")}${errors.length > 5 ? `<p>还有 ${errors.length - 5} 个问题未显示</p>` : ""}</div>`
+    ? `<div class="schedule-errors">${errors.slice(0, 5).map((error) => `<p>第 ${error.line} 行：${escapeHtml(error.reason)}</p>`).join("")}${errors.length > 5 ? `<p>还有 ${errors.length - 5} 个问题未显示</p>` : ""}</div>`
     : "";
   return `
     <article class="mission-card">
@@ -4210,10 +4210,10 @@ function missionActionHtml(mission) {
   const anotherAcceptedMission = !accepted && state.missions.some((item) => item.status === "accepted");
   if (done) return `<button class="ghost-btn" disabled type="button">已完成</button>`;
   if (accepted) {
-    return `<button class="ghost-btn" disabled type="button">${mission.verification?.phaseLabel || "等待模拟器飞行"}</button><button class="primary-btn" data-action="manual-complete-mission" data-id="${mission.id}" type="button"><i data-lucide="circle-check-big"></i><span>手动完成</span></button>`;
+    return `<button class="ghost-btn" disabled type="button">${mission.verification?.phaseLabel || "等待模拟器飞行"}</button><button class="primary-btn" data-action="manual-complete-mission" data-id="${escapeHtml(mission.id)}" type="button"><i data-lucide="circle-check-big"></i><span>手动完成</span></button>`;
   }
   if (anotherAcceptedMission) return `<button class="primary-btn" disabled type="button">已有执行中任务</button>`;
-  return `<button class="primary-btn" data-action="accept-mission" data-id="${mission.id}" type="button">接受任务</button>`;
+  return `<button class="primary-btn" data-action="accept-mission" data-id="${escapeHtml(mission.id)}" type="button">接受任务</button>`;
 }
 
 function renderMissionListItem(mission) {
@@ -4246,10 +4246,10 @@ function renderMissionListItem(mission) {
         <strong>${escapeHtml(formatTaskRouteLabel(mission.route))}</strong>
         <span>${formatTaskDistanceNm(mission.distance)} · ${formatHours(mission.duration)} · ${escapeHtml(mission.dispatchPhase || "日间")}</span>
       </div>
-      <div class="mission-list-status ${statusClass}"><span></span><b>${statusText(mission.status)}</b><small>${escapeHtml(mission.risk)}风险</small></div>
+      <div class="mission-list-status ${statusClass}"><span></span><b>${escapeHtml(statusText(mission.status))}</b><small>${escapeHtml(mission.risk)}风险</small></div>
       <div class="mission-list-actions">
         ${missionActionHtml(mission)}
-        <button class="icon-btn danger-btn" data-action="delete-mission" data-id="${mission.id}" type="button" aria-label="删除任务" title="删除任务"><i data-lucide="trash-2"></i></button>
+        <button class="icon-btn danger-btn" data-action="delete-mission" data-id="${escapeHtml(mission.id)}" type="button" aria-label="删除任务" title="删除任务"><i data-lucide="trash-2"></i></button>
       </div>
     </div>
     <div class="mission-briefing-grid">
@@ -4265,7 +4265,7 @@ function renderMissionListItem(mission) {
       <section class="mission-briefing-block mission-weather-block">
         <h4><i data-lucide="cloud-sun"></i>METAR</h4>
         ${missionMetarLine(originCode, "起飞", mission.weather)}
-        ${missionMetarLine(mission.destination || codes[1], "到达", mission.weather)}
+        ${escapeHtml(missionMetarLine(mission.destination || codes[1], "到达", mission.weather))}
       </section>
       <section class="mission-briefing-block mission-fuel-block">
         <h4><i data-lucide="fuel"></i>燃油计划</h4>
@@ -4273,7 +4273,7 @@ function renderMissionListItem(mission) {
           <div><span>建议起飞</span><strong>${formatFuel(fuel.recommendedFuel)}</strong></div>
           <div><span>当前油量</span><strong>${fuel.currentFuel === null ? "等待同步" : formatFuel(fuel.currentFuel)}</strong>${fuel.currentPercent === null ? "" : `<small>${fuel.currentPercent}%</small>`}</div>
         </div>
-        <p class="mission-fuel-status ${fuel.statusClass}">${fuel.status}</p>
+        <p class="mission-fuel-status ${fuel.statusClass}">${escapeHtml(fuel.status)}</p>
         <small>航段 ${formatFuel(fuel.tripFuel)} + 45 分钟储备 ${formatFuel(fuel.reserveFuel)} · 估算耗油 ${formatFuel(fuel.burnRate)}/小时</small>
       </section>
     </div>
@@ -4302,10 +4302,10 @@ function renderMissionCard(mission) {
     <article class="mission-card ${accepted ? "active" : ""} ${done ? "completed" : ""} ${isAssessment ? "license-assessment-card" : ""}">
       <div class="mission-head">
         <div>
-          <h3>${mission.title}</h3>
-          <p>${mission.summary}</p>
+          <h3>${escapeHtml(mission.title)}</h3>
+          <p>${escapeHtml(mission.summary)}</p>
         </div>
-        <span class="tag ${mission.status === "completed" ? "good" : accepted ? "info" : "warn"}">${statusText(mission.status)}</span>
+        <span class="tag ${escapeHtml(mission.status === "completed" ? "good" : accepted ? "info" : "warn")}">${escapeHtml(statusText(mission.status))}</span>
       </div>
       <div class="mission-animation ${accepted ? "is-flying" : done ? "is-completed" : "is-open"} ${linkedScene ? "scene-linked" : ""}" aria-label="任务状态动画">
         <div class="mission-animation-icon"><i data-lucide="${scene.icon}"></i></div>
@@ -4324,14 +4324,14 @@ function renderMissionCard(mission) {
       ${linkedScene ? `<div class="scene-briefing">
         <p><i data-lucide="crosshair"></i><span>现场目标：${scene.objective}</span></p>
         <div class="tag-row">
-          ${accepted && sceneRuntime ? `<span class="tag ${sceneRuntime.className}" title="${escapeHtml(verification?.sceneDetail || "")}">${sceneRuntime.label}</span>` : ""}
+          ${accepted && sceneRuntime ? `<span class="tag ${sceneRuntime.className}" title="${escapeHtml(verification?.sceneDetail || "")}">${escapeHtml(sceneRuntime.label)}</span>` : ""}
           <span class="tag ${missionTerrainType(mission) === "water" ? "info" : "good"}"><i data-lucide="${missionTerrainType(mission) === "water" ? "waves" : "mountain"}"></i>${missionTerrainLabel(mission)}</span>
           <span class="tag">${scene.animated ? `自动动画 ${scene.seconds}s` : "静态场景"}</span>
           ${accepted && verification?.flightPlanState ? `<span class="tag ${["loaded", "prepared"].includes(verification.flightPlanState) ? "good" : verification.flightPlanState === "error" ? "bad" : "warn"}">MSFS 航路 ${verification.flightPlanState === "loaded" ? "已加载" : verification.flightPlanState === "prepared" ? "已生成" : verification.flightPlanState === "error" ? "失败" : "处理中"}</span>` : ""}
           <span class="tag">目标区 ${scene.radiusNm} nm</span>
           <span class="tag">${missionArrivalLabel(mission)}</span>
-          ${mission.site ? `<span class="tag">基地 ${mission.site.base} · ${formatTaskDistanceNm(mission.site.distanceNm)} · ${String(mission.site.bearing).padStart(3, "0")}°</span>` : ""}
-          ${mission.site?.lat != null ? `<span class="tag scene-coordinate">${mission.site.lat.toFixed(5)}, ${mission.site.lon.toFixed(5)}</span>` : ""}
+          ${mission.site ? `<span class="tag">基地 ${escapeHtml(mission.site.base)} · ${escapeHtml(formatTaskDistanceNm(mission.site.distanceNm))} · ${escapeHtml(String(mission.site.bearing).padStart(3, "0"))}°</span>` : ""}
+          ${mission.site?.lat != null ? `<span class="tag scene-coordinate">${escapeHtml(mission.site.lat.toFixed(5))}, ${escapeHtml(mission.site.lon.toFixed(5))}</span>` : ""}
         </div>
         ${accepted && verification?.sceneDetail ? `<p class="scene-runtime-note is-${verification.sceneState || "waiting"}"><i data-lucide="${verification.sceneState === "created" ? "circle-check" : verification.sceneState === "error" ? "triangle-alert" : "loader-circle"}"></i><span>${escapeHtml(verification.sceneDetail)}</span></p>` : ""}
         ${accepted && verification?.flightPlanDetail ? `<p class="scene-runtime-note is-${verification.flightPlanState || "waiting"}"><i data-lucide="route"></i><span>${escapeHtml(verification.flightPlanDetail)}</span></p>` : ""}
@@ -4339,8 +4339,8 @@ function renderMissionCard(mission) {
       <div class="tag-row">
         ${isAssessment ? `<span class="tag info"><i data-lucide="badge-check"></i>机型考核</span>` : ""}
         ${isEmergencyMission(mission) ? `<span class="tag bad">紧急任务</span>` : ""}
-        <span class="tag">${mission.category}</span>
-        ${mission.origin ? `<span class="tag info">基地 ${mission.origin}</span>` : ""}
+        <span class="tag">${escapeHtml(mission.category)}</span>
+        ${mission.origin ? `<span class="tag info">基地 ${escapeHtml(mission.origin)}</span>` : ""}
         <span class="tag">${escapeHtml(formatTaskRouteLabel(mission.route))}</span>
         <span class="tag">${formatTaskDistanceNm(mission.distance)}</span>
         <span class="tag info">${mission.dispatchPhase || "日间"}任务</span>
@@ -4355,7 +4355,7 @@ function renderMissionCard(mission) {
       ${accepted && !linkedScene && verification?.flightPlanDetail ? `<p class="scene-runtime-note is-${verification.flightPlanState || "waiting"}"><i data-lucide="route"></i><span>${escapeHtml(verification.flightPlanDetail)}</span></p>` : ""}
       <div class="card-actions">
         ${actionHtml}
-        <button class="ghost-btn danger-btn mission-delete-btn" data-action="delete-mission" data-id="${mission.id}" type="button"><i data-lucide="trash-2"></i><span>删除任务</span></button>
+        <button class="ghost-btn danger-btn mission-delete-btn" data-action="delete-mission" data-id="${escapeHtml(mission.id)}" type="button"><i data-lucide="trash-2"></i><span>删除任务</span></button>
       </div>
     </article>`;
 }
@@ -4579,8 +4579,8 @@ function renderAircraftCard(aircraft) {
     && (item.owned || item.rented)
     && (item.catalogId || item.id) === aircraft.id).length;
   const actions = [
-    `<button class="primary-btn" data-action="buy-aircraft" data-id="${aircraft.id}" type="button" ${unlockable ? "" : "disabled"}><i data-lucide="shopping-cart"></i><span>购买</span></button>`,
-    `<button class="ghost-btn" data-action="rent-aircraft" data-id="${aircraft.id}" type="button" ${unlockable ? "" : "disabled"}><i data-lucide="calendar-plus"></i><span>租赁</span></button>`
+    `<button class="primary-btn" data-action="buy-aircraft" data-id="${escapeHtml(aircraft.id)}" type="button" ${unlockable ? "" : "disabled"}><i data-lucide="shopping-cart"></i><span>购买</span></button>`,
+    `<button class="ghost-btn" data-action="rent-aircraft" data-id="${escapeHtml(aircraft.id)}" type="button" ${unlockable ? "" : "disabled"}><i data-lucide="calendar-plus"></i><span>租赁</span></button>`
   ];
   return `
     <article class="hangar-card">
@@ -4633,7 +4633,7 @@ function renderAircraftManagement() {
     <div class="hangar-summary-item">
       <span>当前任务机型</span>
       <strong>${escapeHtml(currentAircraft().name)}</strong>
-      <small>${getAircraftHours(currentAircraft().id).toFixed(1)} 小时运营记录</small>
+      <small>${escapeHtml(getAircraftHours(currentAircraft().id).toFixed(1))} 小时运营记录</small>
     </div>
     <div class="hangar-summary-item ${liveFuel !== null ? "is-live" : ""}">
       <span>MSFS 实际燃油</span>
@@ -4694,11 +4694,11 @@ function renderManagedAircraftCard(aircraft, controlPrefix = "") {
   const maintenanceBlocked = aircraftHasActiveMission(aircraft);
   const actions = isCompanyAircraft(aircraft)
     ? [`<button class="primary-btn" type="button" disabled>公司机型</button>`]
-    : [`<button class="primary-btn" data-action="select-aircraft" data-id="${aircraft.id}" type="button">${selected ? "当前机型" : "设为默认"}</button>`];
-  actions.push(`<button class="ghost-btn" data-action="refuel-aircraft" data-id="${aircraft.id}" data-control-prefix="${escapeHtml(controlPrefix)}" type="button" ${!canUseFuelSlider || targetFuelPercent <= minimumFuelPercent || refuelPending ? "disabled" : ""} title="${escapeHtml(refuelBlockedReason || "将 MSFS 实际油量加注到目标值")}"><i data-lucide="fuel"></i><span>${refuelPending ? "加注中" : "确认加注"}</span></button>`);
-  actions.push(`<button class="ghost-btn" data-action="repair-aircraft" data-id="${aircraft.id}" type="button" ${maintenanceCost <= 0 || maintenanceBlocked ? "disabled" : ""} title="${maintenanceBlocked ? "执行任务期间不能维修" : maintenanceCost <= 0 ? "飞机状态良好" : `维修费用 ${formatMoney(maintenanceCost)}`}"><i data-lucide="wrench"></i><span>维修${maintenanceCost > 0 ? ` ${formatMoney(maintenanceCost)}` : ""}</span></button>`);
-  if (aircraft.rented) actions.push(`<button class="ghost-btn" data-action="return-aircraft" data-id="${aircraft.id}" type="button">归还</button>`);
-  if (aircraft.owned && (!isStarterAircraft(aircraft.id) || isCompanyAircraft(aircraft))) actions.push(`<button class="ghost-btn" data-action="sell-aircraft" data-id="${aircraft.id}" type="button">出售</button>`);
+    : [`<button class="primary-btn" data-action="select-aircraft" data-id="${escapeHtml(aircraft.id)}" type="button">${selected ? "当前机型" : "设为默认"}</button>`];
+  actions.push(`<button class="ghost-btn" data-action="refuel-aircraft" data-id="${escapeHtml(aircraft.id)}" data-control-prefix="${escapeHtml(controlPrefix)}" type="button" ${!canUseFuelSlider || targetFuelPercent <= minimumFuelPercent || refuelPending ? "disabled" : ""} title="${escapeHtml(refuelBlockedReason || "将 MSFS 实际油量加注到目标值")}"><i data-lucide="fuel"></i><span>${refuelPending ? "加注中" : "确认加注"}</span></button>`);
+  actions.push(`<button class="ghost-btn" data-action="repair-aircraft" data-id="${escapeHtml(aircraft.id)}" type="button" ${maintenanceCost <= 0 || maintenanceBlocked ? "disabled" : ""} title="${maintenanceBlocked ? "执行任务期间不能维修" : maintenanceCost <= 0 ? "飞机状态良好" : `维修费用 ${formatMoney(maintenanceCost)}`}"><i data-lucide="wrench"></i><span>维修${maintenanceCost > 0 ? ` ${formatMoney(maintenanceCost)}` : ""}</span></button>`);
+  if (aircraft.rented) actions.push(`<button class="ghost-btn" data-action="return-aircraft" data-id="${escapeHtml(aircraft.id)}" type="button">归还</button>`);
+  if (aircraft.owned && (!isStarterAircraft(aircraft.id) || isCompanyAircraft(aircraft))) actions.push(`<button class="ghost-btn" data-action="sell-aircraft" data-id="${escapeHtml(aircraft.id)}" type="button">出售</button>`);
   return `
     <article class="hangar-card ${selected ? "is-current" : ""} ${liveInMsfs ? "is-msfs-live" : ""}">
       <div class="hangar-head">
@@ -4718,7 +4718,7 @@ function renderManagedAircraftCard(aircraft, controlPrefix = "") {
         <span class="tag">${aircraft.owned ? `资产 ${formatMoney(aircraft.price)}` : `租金 ${formatMoney(aircraft.rent)}`}</span>
       </div>
       <div class="aircraft-ops">
-        <div><span>飞行记录</span><strong>${logs.length} 航段</strong><small>${getAircraftHours(aircraft.id).toFixed(1)} 小时</small></div>
+        <div><span>飞行记录</span><strong>${logs.length} 航段</strong><small>${escapeHtml(getAircraftHours(aircraft.id).toFixed(1))} 小时</small></div>
         <div><span>实际消耗</span><strong>${formatFuel(fuelUsedKg)}</strong><small>已结算任务累计</small></div>
         <div><span>最近实际油量</span><strong>${formatFuel(aircraft.lastFuelKg)}</strong><small>${formatFuelTimestamp(aircraft.lastFuelAt)}</small></div>
       </div>
@@ -4728,13 +4728,13 @@ function renderManagedAircraftCard(aircraft, controlPrefix = "") {
             <span>加注燃油</span>
           <output id="fuelTarget-${controlId}" for="fuelSlider-${controlId}">${targetFuelPercent.toFixed(0)}%</output>
         </div>
-          <input id="fuelSlider-${controlId}" class="fuel-slider" data-action="fuel-target" data-id="${aircraft.id}" data-control-prefix="${escapeHtml(controlPrefix)}" data-minimum="${minimumFuelPercent}" type="range" min="0" max="100" step="1" value="${targetFuelPercent}" aria-label="${escapeHtml(aircraft.name)} 加注燃油目标" ${canUseFuelSlider && !refuelPending ? "" : "disabled"}>
+          <input id="fuelSlider-${controlId}" class="fuel-slider" data-action="fuel-target" data-id="${escapeHtml(aircraft.id)}" data-control-prefix="${escapeHtml(controlPrefix)}" data-minimum="${minimumFuelPercent}" type="range" min="0" max="100" step="1" value="${targetFuelPercent}" aria-label="${escapeHtml(aircraft.name)} 加注燃油目标" ${canUseFuelSlider && !refuelPending ? "" : "disabled"}>
           <small>${canUseFuelSlider ? `当前 ${currentFuelPercent.toFixed(0)}% · ${formatFuel(fuelKg)} / ${formatFuel(capacityKg)}` : refuelBlockedReason}</small>
         </div>
         <div class="aircraft-service-control">
           <div class="aircraft-service-label"><span>飞机机况</span><strong>${condition.toFixed(1)}%</strong></div>
           <div class="condition-meter ${conditionLevel.className}" role="meter" aria-label="${escapeHtml(aircraft.name)} 机况" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${condition}"><span style="width:${condition}%"></span></div>
-          <small>${conditionLevel.label} · ${landingConditionDetail}${maintenanceCost > 0 ? ` · 维修费用 ${formatMoney(maintenanceCost)}` : ""}</small>
+          <small>${escapeHtml(conditionLevel.label)} · ${landingConditionDetail}${maintenanceCost > 0 ? ` · 维修费用 ${formatMoney(maintenanceCost)}` : ""}</small>
         </div>
       </div>
       <div class="card-actions">${actions.join("")}</div>
@@ -4794,7 +4794,7 @@ function renderCompanyManagement() {
   const base = companyBase();
   const pilots = company.pilots.filter((pilot) => pilot.status !== "fired");
   const managedFleet = companyManagedFleet();
-  els.companyIdentity.innerHTML = `<div class="company-identity-main">${airlineLogo(airline, "airline-logo mini")}<strong>${escapeHtml(company.name || airline.name)}</strong><span>${airline.code}</span></div>`;
+  els.companyIdentity.innerHTML = `<div class="company-identity-main">${airlineLogo(airline, "airline-logo mini")}<strong>${escapeHtml(company.name || airline.name)}</strong><span>${escapeHtml(airline.code)}</span></div>`;
   els.companyManagementPanel.innerHTML = `
     <div class="company-overview-grid">
       <section class="panel company-profile-card">
@@ -4810,7 +4810,7 @@ function renderCompanyManagement() {
     </div>
     <div class="company-summary">
       <div><span>公司任务</span><strong>${company.tasks.length}</strong><small>已派遣任务</small></div>
-      <div><span>在岗飞行员</span><strong>${pilots.filter((pilot) => pilot.status === "active").length}</strong><small>可接受派遣</small></div>
+      <div><span>在岗飞行员</span><strong>${escapeHtml(pilots.filter((pilot) => pilot.status === "active").length)}</strong><small>可接受派遣</small></div>
       <div><span>公司机库</span><strong>${managedFleet.length}</strong><small>含公司初始飞机</small></div>
       <div><span>合作航司</span><strong>${escapeHtml(airline.code)}</strong><small>${escapeHtml(airline.region)}</small></div>
     </div>`;
@@ -4939,16 +4939,16 @@ function renderCompanyTasks() {
     const plane = state.fleet.find((item) => item.id === task.aircraftId);
     const flightLog = state.company.flightLogs?.find((log) => log.taskId === task.id);
     const resultLabel = task.status === "assigned" ? "已派遣" : companyFlightStatusLabel(flightLog?.status || task.status);
-    return `<article class="company-row company-task-row"><div><strong>${escapeHtml(task.title)}</strong><p>${escapeHtml(task.origin)} → ${escapeHtml(task.destination)} · ${escapeHtml(resultLabel)} · ${escapeHtml(companyAirportCheckLabel(flightLog || task))}</p></div><div class="company-row-meta"><span class="tag info">${escapeHtml(pilot?.name || "未分配")}</span><span class="tag">${escapeHtml(plane?.name || "未分配飞机")} · 编号 ${escapeHtml(aircraftFleetNumber(plane))}</span>${task.status === "assigned" ? `<button class="ghost-btn" data-action="complete-company-task" data-id="${task.id}" type="button"><i data-lucide="circle-check"></i><span>完成派遣</span></button>` : `<span class="tag ${flightLog?.status === "airport-mismatch" ? "bad" : "good"}">收入 ${formatMoney(task.payout || 0)}</span>`}</div></article>`;
+    return `<article class="company-row company-task-row"><div><strong>${escapeHtml(task.title)}</strong><p>${escapeHtml(task.origin)} → ${escapeHtml(task.destination)} · ${escapeHtml(resultLabel)} · ${escapeHtml(companyAirportCheckLabel(flightLog || task))}</p></div><div class="company-row-meta"><span class="tag info">${escapeHtml(pilot?.name || "未分配")}</span><span class="tag">${escapeHtml(plane?.name || "未分配飞机")} · 编号 ${escapeHtml(aircraftFleetNumber(plane))}</span>${task.status === "assigned" ? `<button class="ghost-btn" data-action="complete-company-task" data-id="${escapeHtml(task.id)}" type="button"><i data-lucide="circle-check"></i><span>完成派遣</span></button>` : `<span class="tag ${escapeHtml(flightLog?.status === "airport-mismatch" ? "bad" : "good")}">收入 ${formatMoney(task.payout || 0)}</span>`}</div></article>`;
   }).join("");
   const available = state.company.taskOffers.filter((mission) => mission.status === "open");
   const availableHtml = available.map((mission) => `
     <article class="company-row company-task-row">
       <div><strong>${escapeHtml(mission.title)}</strong><p>${escapeHtml(mission.category)} · ${escapeHtml(mission.origin || state.company.base)} → ${escapeHtml(mission.destination || "任务现场")} · ${formatTaskDistanceNm(mission.distance)} · 奖励 ${formatMoney(mission.payout)}</p><small>建议机型：${escapeHtml(mission.aircraftHint || "公司机队可用机型")}</small></div>
-      <div class="company-dispatch-controls" data-company-dispatch-for="${mission.id}">
-        <select data-company-pilot-for="${mission.id}" aria-label="${escapeHtml(mission.title)} 派遣飞行员"><option value="">选择飞行员</option>${pilots.map((pilot) => `<option value="${escapeHtml(pilot.id)}"${selections.get(mission.id)?.pilotId === pilot.id ? " selected" : ""}${pilot.assignedTaskId ? " disabled" : ""}>${escapeHtml(pilot.name)} · 技能 ${pilot.skillLevel}</option>`).join("")}</select>
-        <select data-company-aircraft-for="${mission.id}" aria-label="${escapeHtml(mission.title)} 派遣飞机"><option value="">选择飞机</option>${aircraft.map((plane) => `<option value="${escapeHtml(plane.id)}"${selections.get(mission.id)?.aircraftId === plane.id ? " selected" : ""}>${escapeHtml(plane.name)} · ${escapeHtml(plane.kind)} · 编号 ${escapeHtml(aircraftFleetNumber(plane))}</option>`).join("")}</select>
-        <button class="primary-btn" data-action="dispatch-company-task" data-id="${mission.id}" type="button" ${!pilots.length || !aircraft.length ? "disabled" : ""}><i data-lucide="send"></i><span>派遣任务</span></button>
+      <div class="company-dispatch-controls" data-company-dispatch-for="${escapeHtml(mission.id)}">
+        <select data-company-pilot-for="${escapeHtml(mission.id)}" aria-label="${escapeHtml(mission.title)} 派遣飞行员"><option value="">选择飞行员</option>${pilots.map((pilot) => `<option value="${escapeHtml(pilot.id)}"${escapeHtml(selections.get(mission.id)?.pilotId === pilot.id ? " selected" : "")}${pilot.assignedTaskId ? " disabled" : ""}>${escapeHtml(pilot.name)} · 技能 ${pilot.skillLevel}</option>`).join("")}</select>
+        <select data-company-aircraft-for="${escapeHtml(mission.id)}" aria-label="${escapeHtml(mission.title)} 派遣飞机"><option value="">选择飞机</option>${aircraft.map((plane) => `<option value="${escapeHtml(plane.id)}"${escapeHtml(selections.get(mission.id)?.aircraftId === plane.id ? " selected" : "")}>${escapeHtml(plane.name)} · ${escapeHtml(plane.kind)} · 编号 ${escapeHtml(aircraftFleetNumber(plane))}</option>`).join("")}</select>
+        <button class="primary-btn" data-action="dispatch-company-task" data-id="${escapeHtml(mission.id)}" type="button" ${!pilots.length || !aircraft.length ? "disabled" : ""}><i data-lucide="send"></i><span>派遣任务</span></button>
       </div>
     </article>`).join("");
   els.companyTaskList.innerHTML = `<div class="company-list-heading"><span>已派遣</span><small>${state.company.tasks.length} 条</small></div>${assigned || `<p class="company-muted">暂无已派遣任务。</p>`}<div class="company-list-heading"><span>可派遣任务</span><small>${available.length} 条</small></div>${availableHtml || `<p class="company-muted">暂无可派遣任务，请先刷新任务。</p>`}`;
@@ -4958,17 +4958,17 @@ function renderCompanyTasks() {
 function renderCompanyPilots() {
   if (!state.company.created) return;
   const pilots = state.company.pilots.filter((pilot) => pilot.status !== "fired");
-  els.companyPilotSummary.innerHTML = `<div><span>在岗</span><strong>${pilots.filter((pilot) => pilot.status === "active").length}</strong><small>可派遣</small></div><div><span>平均技能</span><strong>${pilots.length ? Math.round(pilots.reduce((sum, pilot) => sum + Number(pilot.skill || 0), 0) / pilots.length) : 0}</strong><small>技能评分</small></div><div><span>月度薪资</span><strong>${formatMoney(pilots.reduce((sum, pilot) => sum + Number(pilot.salary || 0), 0))}</strong><small>预计支出</small></div>`;
+  els.companyPilotSummary.innerHTML = `<div><span>在岗</span><strong>${escapeHtml(pilots.filter((pilot) => pilot.status === "active").length)}</strong><small>可派遣</small></div><div><span>平均技能</span><strong>${pilots.length ? Math.round(pilots.reduce((sum, pilot) => sum + Number(pilot.skill || 0), 0) / pilots.length) : 0}</strong><small>技能评分</small></div><div><span>月度薪资</span><strong>${formatMoney(pilots.reduce((sum, pilot) => sum + Number(pilot.salary || 0), 0))}</strong><small>预计支出</small></div>`;
   els.companyPilotList.innerHTML = pilots.map((pilot) => {
     const assigned = state.company.tasks.find((task) => task.id === pilot.assignedTaskId);
     const cost = companyPilotUpgradeCost(pilot);
-    return `<article class="company-row company-pilot-row"><div class="pilot-avatar">${escapeHtml((pilot.name || "飞").slice(0, 1))}</div><div class="company-row-main"><strong>${escapeHtml(pilot.name)} ${pilot.owner ? "· 公司负责人" : ""}</strong><p>${escapeHtml(pilotAircraftKinds(pilot).join("、"))} · 技能等级 ${pilot.skillLevel} · 评分 ${pilot.skill} · ${pilot.experienceHours.toFixed(1)} 小时</p><small>${assigned ? `已派遣：${escapeHtml(assigned.title)}` : "当前空闲，可接受派遣"}</small></div><div class="card-actions company-inline-actions"><button class="ghost-btn" data-action="upgrade-company-pilot" data-id="${pilot.id}" type="button" ${pilot.skillLevel >= 5 || state.company.funds < cost ? "disabled" : ""}><i data-lucide="arrow-up-circle"></i><span>提升 ${formatMoney(cost)}</span></button><button class="ghost-btn danger-btn" data-action="fire-company-pilot" data-id="${pilot.id}" type="button" ${pilot.owner || assigned ? "disabled" : ""}>解雇</button><button class="text-btn" data-action="open-company-tasks" type="button">派遣任务</button></div></article>`;
+    return `<article class="company-row company-pilot-row"><div class="pilot-avatar">${escapeHtml((pilot.name || "飞").slice(0, 1))}</div><div class="company-row-main"><strong>${escapeHtml(pilot.name)} ${pilot.owner ? "· 公司负责人" : ""}</strong><p>${escapeHtml(pilotAircraftKinds(pilot).join("、"))} · 技能等级 ${pilot.skillLevel} · 评分 ${pilot.skill} · ${pilot.experienceHours.toFixed(1)} 小时</p><small>${assigned ? `已派遣：${escapeHtml(assigned.title)}` : "当前空闲，可接受派遣"}</small></div><div class="card-actions company-inline-actions"><button class="ghost-btn" data-action="upgrade-company-pilot" data-id="${escapeHtml(pilot.id)}" type="button" ${pilot.skillLevel >= 5 || state.company.funds < cost ? "disabled" : ""}><i data-lucide="arrow-up-circle"></i><span>提升 ${formatMoney(cost)}</span></button><button class="ghost-btn danger-btn" data-action="fire-company-pilot" data-id="${escapeHtml(pilot.id)}" type="button" ${pilot.owner || assigned ? "disabled" : ""}>解雇</button><button class="text-btn" data-action="open-company-tasks" type="button">派遣任务</button></div></article>`;
   }).join("") || companyEmpty("还没有在岗飞行员，请先招聘。");
 }
 
 function renderCompanyApplicants() {
   if (!state.company.created) return;
-  els.companyApplicantList.innerHTML = state.company.applicants.map((applicant) => `<article class="company-row company-applicant-row"><div class="pilot-avatar is-applicant">${escapeHtml((applicant.name || "候").slice(0, 1))}</div><div class="company-row-main"><strong>${escapeHtml(applicant.name)}</strong><p>技能等级 ${applicant.skillLevel} · 评分 ${applicant.skill} · 可操作 ${escapeHtml(normalizeAircraftKinds(applicant.aircraftKinds || applicant.aircraftKind).join("、"))}</p><small>经验 ${applicant.experienceHours.toFixed(1)} 小时 · 月薪 ${formatMoney(applicant.salary)}</small></div><div class="company-inline-actions"><span class="tag warn">雇佣 ${formatMoney(applicant.hirePrice)}</span><button class="primary-btn" data-action="hire-company-pilot" data-id="${applicant.id}" type="button" ${state.company.funds < applicant.hirePrice ? "disabled" : ""}><i data-lucide="user-plus"></i><span>雇佣</span></button></div></article>`).join("") || companyEmpty("暂无候选人，请刷新招聘名单。");
+  els.companyApplicantList.innerHTML = state.company.applicants.map((applicant) => `<article class="company-row company-applicant-row"><div class="pilot-avatar is-applicant">${escapeHtml((applicant.name || "候").slice(0, 1))}</div><div class="company-row-main"><strong>${escapeHtml(applicant.name)}</strong><p>技能等级 ${applicant.skillLevel} · 评分 ${applicant.skill} · 可操作 ${escapeHtml(normalizeAircraftKinds(applicant.aircraftKinds || applicant.aircraftKind).join("、"))}</p><small>经验 ${applicant.experienceHours.toFixed(1)} 小时 · 月薪 ${formatMoney(applicant.salary)}</small></div><div class="company-inline-actions"><span class="tag warn">雇佣 ${formatMoney(applicant.hirePrice)}</span><button class="primary-btn" data-action="hire-company-pilot" data-id="${escapeHtml(applicant.id)}" type="button" ${state.company.funds < applicant.hirePrice ? "disabled" : ""}><i data-lucide="user-plus"></i><span>雇佣</span></button></div></article>`).join("") || companyEmpty("暂无候选人，请刷新招聘名单。");
 }
 
 function renderCompanyHangar() {
@@ -5041,7 +5041,7 @@ function renderAchievements() {
       <article class="achievement-card">
         <div class="mission-head">
           <div>
-            <h3>${def.title}</h3>
+            <h3>${escapeHtml(def.title)}</h3>
             <p>${def.desc}</p>
           </div>
           <span class="tag ${unlocked ? "good" : "warn"}">${unlocked ? "已达成" : "未完成"}</span>

@@ -497,9 +497,19 @@ function isCrashLanding(landingOrWear) {
 
 function syncFleetLandingWear(landing) {
   if (!landing) return null;
+  const reportTimestamp = Date.parse(landing.timestamp || landing.Timestamp || "");
+  const lastProcessedAt = Number(state.features?.lastProcessedLandingReportAt) || 0;
+  if (!Number.isFinite(reportTimestamp) || reportTimestamp <= lastProcessedAt) return null;
   const aircraft = state.fleet.find((item) => (item.owned || item.rented) && telemetryMatchesAircraft(landing, item));
   if (!aircraft) return null;
-  return applyLandingWear(aircraft, landing, state.features?.landingWearStartedAt);
+  const landingWear = applyLandingWear(aircraft, landing, state.features?.landingWearStartedAt);
+  if (landingWear) {
+    state.features = {
+      ...(state.features || {}),
+      lastProcessedLandingReportAt: reportTimestamp
+    };
+  }
+  return landingWear;
 }
 
 function telemetryEventTime(value, fallback = Date.now()) {
@@ -819,4 +829,3 @@ function aircraftHasActiveMission(aircraft) {
   return state.missions.some((mission) => mission.status === "accepted"
     && mission.verification?.aircraftId === aircraft?.id);
 }
-

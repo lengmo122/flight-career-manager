@@ -50,7 +50,12 @@ function defaultState() {
       transactions: [],
       activeSection: "management"
     },
-    features: { sceneObjectsSeeded: false, starterHelicopterGranted: true, landingWearStartedAt: 0 },
+    features: {
+      sceneObjectsSeeded: false,
+      starterHelicopterGranted: true,
+      landingWearStartedAt: 0,
+      lastProcessedLandingReportAt: 0
+    },
     logs: [],
     taskEvents: [],
     fundTransactions: [openingFundTransaction(25000)],
@@ -229,6 +234,13 @@ function mergeState(base, incoming) {
     merged.features.starterHelicopterGranted = false;
   }
   merged.logs = Array.isArray(incoming.logs) ? incoming.logs : merged.logs;
+  const processedLandingReportTimes = [
+    Number(merged.features.lastProcessedLandingReportAt) || 0,
+    ...merged.logs.map((log) => Number(log?.landingReportAt) || 0),
+    ...(Array.isArray(incoming.fleet) ? incoming.fleet : merged.fleet)
+      .map((aircraft) => Number(aircraft?.lastLandingReportAt) || 0)
+  ];
+  merged.features.lastProcessedLandingReportAt = Math.max(0, ...processedLandingReportTimes);
   merged.taskEvents = Array.isArray(incoming.taskEvents) ? incoming.taskEvents : merged.taskEvents;
   merged.fundTransactions = normalizeFundTransactions(incoming.fundTransactions, merged.cash);
   if (migratedLegacyFreeModeCash) {
@@ -1211,4 +1223,3 @@ function nearestKnownAirport(lat, lon, maximumNm = 4) {
   }, null);
   return nearest?.distance <= maximumNm ? nearest : null;
 }
-
